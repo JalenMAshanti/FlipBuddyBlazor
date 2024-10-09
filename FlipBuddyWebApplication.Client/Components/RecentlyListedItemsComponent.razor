@@ -1,0 +1,68 @@
+﻿<div class="fade-container">
+    <table class="table table-borderless">
+        <tbody>
+            <tr class="fw-bold">
+                <th scope="row">1</th>
+                <td><i class="bi bi-joystick py-2 px-3 rounded-3 shadow-sm" style="font-size:23px; background:white;"></i></td>
+                <td>Product Title</td>
+                <td>$34.84</td>
+                <td>Sold</td>
+                <td>Reviewed</td>
+            </tr>
+            <tr class="fw-bold">
+                <th scope="row">2</th>
+                <td><i class="bi bi-joystick py-2 px-3 rounded-3 shadow-sm" style="font-size:23px; background:white;"></i></td>
+                <td>Product Title</td>
+                <td>$34.84</td>
+                <td>Sold</td>
+                <td>Reviewed</td>
+            </tr>
+            <tr class="fw-bold">
+                <th scope="row">3</th>
+                <td><i class="bi bi-joystick py-2 px-3 rounded-3 shadow-sm" style="font-size:23px; background:white;"></i></td>
+                <td>Product Title</td>
+                <td>$34.84</td>
+                <td>Sold</td>
+                <td>Reviewed</td>
+            </tr>
+            <tr class="fw-bold">
+                <th scope="row">4</th>
+                <td><i class="bi bi-joystick py-2 px-3 rounded-3 shadow-sm" style="font-size:23px; background:white;"></i></td>
+                <td>Product Title</td>
+                <td>$34.84</td>
+                <td>Sold</td>
+                <td>Reviewed</td>
+            </tr>
+            <tr class="fw-bold">
+                <th scope="row">4</th>
+                <td><i class="bi bi-joystick py-2 px-3 rounded-3 shadow-sm" style="font-size:23px; background:white;"></i></td>
+                <td>Product Title</td>
+                <td>$34.84</td>
+                <td>Sold</td>
+                <td>Reviewed</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .fade-container {
+        position: relative;
+        height: 200px; /* Adjust the height as needed */
+        overflow: hidden;
+    }
+
+        .fade-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px; /* Height of the fade effect */
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+            pointer-events: none; /* Allows clicks to pass through */
+        }
+</style>
+@code {
+
+}

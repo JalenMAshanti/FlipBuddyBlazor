@@ -1,0 +1,114 @@
+﻿@page "/login"
+
+@using FlipBuddyWebApplication.Domain.Models;
+@using FlipBuddyWebApplication.Persistence.API;
+@using FlipBuddyWebApplication.Persistence.API.ApiResponses
+@inject ExternalApiService ExternalApiService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime jSRuntime
+
+
+
+<div class="" style="background:#EAEEE5; height:100vh; width:100%; ">
+	<div class="loginbg" style="height:100%;">
+		<div class="container pt-4" style="">
+
+			<div class="row">
+				<div class="col-6 col-sm-4">
+					<h2 class="fw-bold">FlipBuddy</h2>
+				</div>
+
+				<div class="col-6 col-sm-8 d-flex justify-content-end">
+					<a href="/signup" class="btn fw-bold text-black">Sign up</a>
+					<a class="btn text-white fw-bold rounded-3 ms-5 shadow" style="background:#3E7E55;">Request Demo</a>
+				</div>
+			</div>
+
+
+			<div class="row px-5 mt-5">
+				<div class="container bg-white rounded-4 p-5 shadow-sm mx-auto my-auto" style="max-width:700px;">
+
+					<h1 class="fw-bold text-center pb-4">Account Login</h1>
+
+					<EditForm Model="@loginRequest" FormName="loginForm" OnValidSubmit="HandleLogin">
+						<DataAnnotationsValidator />
+						<div class="mb-3">
+							<label for="username" class="form-label fw-bold">Username</label>
+							<InputText @bind-Value="loginRequest.Username" class="form-control" id="username placeholder="name@example.com" />
+							<ValidationMessage For="()=> loginRequest.Username" />
+						</div>
+
+						<label for="password" class="form-label fw-bold">Password</label>
+						<InputText @bind-Value="loginRequest.Password" type="password" id="password" class="form-control" aria-describedby="passwordHelpBlock" />
+						<ValidationMessage For="()=> loginRequest.Password" />
+						<div id="passwordHelpBlock" class="form-text">
+							Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+						</div>
+
+
+						<a href="#" class="text-secondary"><h1 class="fw-bold text-secondary text-center fs-6 mt-4">Having trouble signing in?</h1></a>
+
+						<div class="d-grid gap-2 pt-3">
+							<button class="btn fw-bold text-white" type="submit" style="background:#3E7E55;">Sign in</button>
+						</div>
+					</EditForm>
+
+					<h1 class="fw-bold text-secondary text-center fs-6 m-4">Or sign in with</h1>
+
+					<div class="d-grid gap-2">
+						<a href="#" class="btn btn-light shadow-sm fw-bold" type="button"><i class="bi bi-google"></i>   Google</a>
+						<a href="#" class="btn btn-light shadow-sm fw-bold" type="button">Ebay</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.loginbg {
+		background-image: url('Images/LoginBackground.png');
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: center;
+		background-blend-mode: overlay;
+	}
+</style>
+
+@code {
+	[SupplyParameterFromForm]
+	private LoginRequest loginRequest { get; set; } = new LoginRequest()
+		{
+			Username = "",
+			Password = "",
+		};
+
+
+	private async Task HandleLogin()
+	{
+		string response = string.Empty;
+		try
+		{
+			var result = await ExternalApiService.GetAPIResponse<LoginAPIResponse>($"https://localhost:7294/Login/LoginByUsernameAndPassword?Username={loginRequest.Username}&Password={loginRequest.Password}");
+			response = result.userGuid.guid;
+		}
+		catch 
+		{
+			NavigationManager.NavigateTo("/login");
+		}
+
+		if(response is not null)
+		{
+			NavigationManager.NavigateTo("/dashboard");
+			await Task.CompletedTask;	
+
+		}
+
+		NavigationManager.NavigateTo("/login");			
+	}
+
+}

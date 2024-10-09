@@ -1,0 +1,32 @@
+﻿@using FlipBuddyWebApplication.Domain.Models
+@rendermode InteractiveServer
+
+@using Blazor_ApexCharts
+@using MudBlazor
+
+
+
+
+
+<MudChart ChartType="MudBlazor.ChartType.Donut" Width="250px" Height="250px" InputData="@data" ChartOptions="chartOptions">
+    <CustomGraphics>
+            
+			<text class="donut-inner-text" x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Urbanist" font-size="3">Total</text>
+			<text class="donut-inner-text" x="50%" y="59%" dominant-baseline="middle" text-anchor="middle" fill="black" font-weight="Bold" font-family="Urbanist" font-size="7">@data.Sum().ToString()</text>
+       
+       
+    </CustomGraphics>
+</MudChart>
+
+@code {
+    public double[] data = { 78, 46, 12};
+    public string[] labels = { "Mobile Devices", "VideoGames", "Accessories"};
+
+    // Chart options with ShowLegend set to false
+    private ChartOptions chartOptions = new ChartOptions
+        {
+            ShowLegend = false, // This hides the legend (key)
+           
+        };
+}
+

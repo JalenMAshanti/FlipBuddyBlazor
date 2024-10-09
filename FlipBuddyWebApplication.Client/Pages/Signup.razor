@@ -1,0 +1,165 @@
+﻿@page "/signup"
+
+@using FlipBuddyWebApplication.Domain.Models;
+@using FlipBuddyWebApplication.Persistence.API;
+@using FlipBuddyWebApplication.Persistence.API.ApiResponses
+@inject ExternalApiService ExternalApiService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime jSRuntime
+
+
+<div class="" style="background:#EAEEE5; height:100%; width:100%; ">
+	<div class="loginbg" style="height:100%;">
+		<div class="container pt-4" style="">
+
+			<div class="row">
+				<div class="col-6 col-sm-4">
+					<h2 class="fw-bold">FlipBuddy</h2>
+				</div>
+
+				<div class="col-6 col-sm-8 d-flex justify-content-end">
+					<a href="/login" class="btn fw-bold text-black">Log in</a>
+					<a class="btn text-white fw-bold rounded-3 ms-5 shadow" style="background:#3E7E55;">Request Demo</a>
+				</div>
+			</div>
+
+
+			<div class="row px-5 mt-5">
+				<div class="container bg-white rounded-4 p-5 shadow-sm mx-auto my-auto" style="max-width:700px;">
+
+					<h1 class="fw-bold text-center pb-4">Sign up</h1>
+
+					<EditForm Model="@signupRequest" FormName="signupForm" OnValidSubmit="HandleSignup">
+						
+						<form class="g-3 needs-validation" novalidate>
+							
+							<div class="row">
+								<div class="col">
+									<label for="validationCustom01" class="form-label fw-bold">First name</label>
+									<InputText @bind-Value="signupRequest.FirstName" type="text" class="form-control fw-bold" id="validationCustom01"  required/>
+									<div class="valid-feedback">
+										Looks good!
+									</div>
+								</div>
+								<div class="col">
+									<label for="validationCustom02" class="form-label fw-bold">Last name</label>
+									<InputText @bind-Value="signupRequest.LastName" type="text" class="form-control fw-bold" id="validationCustom02"  required/>
+									<div class="valid-feedback">
+										Looks good!
+									</div>
+								</div>
+							</div>
+							
+							<div class="row pt-3">
+								<label for="validationCustomUsername" class="form-label fw-bold">Username</label>
+								<div class="input-group has-validation">
+								  <span class="input-group-text" id="inputGroupPrepend">@@</span>
+								  <InputText @bind-Value="signupRequest.Username" type="text" class="form-control fw-bold" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required/>
+								  <div class="invalid-feedback">
+									Please choose a username.
+								  </div>
+								</div>
+							</div>
+
+							<div class="row pt-3">
+								<label for="validationEmail" class="form-label fw-bold">Email</label>
+								<div class="input-group has-validation">
+									<span class="input-group-text" id="inputGroupPrepend"><i class="bi bi-envelope"></i></span>
+									<InputText @bind-Value="signupRequest.Email" type="text" class="form-control fw-bold" id="validationEmail" aria-describedby="inputGroupPrepend" required/>
+									<div class="invalid-feedback">
+										Please choose a username.
+									</div>
+								</div>
+							</div>
+							
+							
+							<div class="row pt-3">
+								<div class="col">
+									<label for="PasswordValidation01" class="form-label fw-bold">Password</label>
+									<InputText @bind-Value="signupRequest.Password" type="password" class="form-control fw-bold fs-5" id="PasswordValidation01" required/>
+									<div class="valid-feedback">
+										Looks good!
+									</div>
+								</div>
+								<div class="col">
+									<label for="PasswordValidation02" class="form-label fw-bold">Retype Password</label>
+									<InputText @bind-Value="signupRequest.Password" type="password" class="form-control fw-bold fs-5" id="PasswordValidation02" required/>
+								</div>
+							</div>
+
+							<div class="row pt-2">
+								<div class="form-check" style="display:flex; justify-content:center; align-content:center;">
+									<input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+									<label class="form-check-label" for="invalidCheck">
+										Agree to terms and conditions
+									</label>
+									<div class="invalid-feedback">
+										You must agree before submitting.
+									</div>
+								</div>
+							</div>
+
+							<div class="d-grid gap-2 pt-2">
+								<button class="btn fw-bold text-white" type="submit" style="background:#3E7E55;">Sign up</button>
+							</div>
+
+						</form>
+						
+					</EditForm>
+
+					<h1 class="fw-bold text-secondary text-center fs-6 m-4">Or sign up with</h1>
+
+					<div class="d-grid gap-2">
+						<a href="#" class="btn btn-light shadow-sm fw-bold" type="button"><i class="bi bi-google"></i>   Google</a>
+						<a href="#" class="btn btn-light shadow-sm fw-bold" type="button">Ebay</a>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="row">
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.loginbg {
+		background-image: url('Images/LoginBackground.png');
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: center;
+		background-blend-mode: overlay;
+	}
+</style>
+
+@code {
+	[SupplyParameterFromForm]
+	private SignupRequest signupRequest { get; set; } = new SignupRequest()
+	{
+
+	};
+
+	private async Task HandleSignup()
+	{
+		string response = string.Empty;
+		try
+		{
+			signupRequest.Guid = Guid.Parse(await ExternalApiService.GetAPIResponse<string>($"https://localhost:7294/Guid/GetNewGuid"));
+			response = await ExternalApiService.PostAPIRequest($"https://localhost:7294/User/InsertUser", signupRequest);
+		}
+		catch 
+		{
+			NavigationManager.NavigateTo("/signup");
+		}
+
+		if(string.IsNullOrEmpty(response))
+		{
+			NavigationManager.NavigateTo("/login");
+			await Task.CompletedTask;	
+		}
+
+		NavigationManager.NavigateTo("/signup");			
+	}
+}

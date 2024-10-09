@@ -1,0 +1,41 @@
+﻿@page "/dashboard"
+
+@using FlipBuddyWebApplication.Client.Components
+@rendermode InteractiveServer
+
+<head>
+	<link href="~/lib/apexcharts/apexcharts.css" rel="stylesheet" />
+	<link href="~/lib/apexcharts/apexcharts.min.css" rel="stylesheet" />
+</head>
+
+<div class="sidebar"> 
+    <NavBar OnNavButtonClick="ChangeView"/>
+</div>
+
+<div style="padding:2vh; padding-left:0;; background:#3E7E55; width:100%">
+    <div class=" col-12" style="height: 100%; width:100%;">
+		<article class="content px-4 py-3" style="overflow-x:auto; background-color: white; height: 100%; width:100%; border-radius:2vh; scrollbar-width:none;">
+            @if (currentView == "Home")
+            {
+                <HomeComponent/>
+            }
+            else if (currentView == "Search")
+            {
+               <ProductSearchComponent/>
+            }
+
+		</article>
+    </div>    
+</div>
+
+
+@code {
+    private string currentView = "Home";
+
+    private void ChangeView(string view)
+    {
+        currentView = view;
+        StateHasChanged();
+    }
+
+}
