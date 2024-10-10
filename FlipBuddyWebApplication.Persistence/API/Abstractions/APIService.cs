@@ -45,7 +45,7 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
             }
         }
 
-        public async Task<string> PostAPIRequest(string _url, Object body)
+        public async Task<HttpResponseMessage> PostAPIRequest(string _url, Object body)
         {
 
             var client = ClientFactory.CreateNewClient();
@@ -57,12 +57,13 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await client.PostAsync("", data);
-            var result = await response.Content.ReadAsStringAsync();
+            
             client.Dispose();
-            return result;
+
+            return response;
         }
 
-        public Task<string> PutAPIRequest(string _url, Object body)
+        public async Task<HttpResponseMessage> PutAPIRequest(string _url, Object body)
         {
             var client = ClientFactory.CreateNewClient();
 
@@ -72,8 +73,19 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
 
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = client.PutAsync("", data).Result;
-            var result = response.Content.ReadAsStringAsync();
+            var response = await client.PutAsync("", data);
+            
+            client.Dispose();
+
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteAPIRequest(string _url) 
+        {
+            var client = ClientFactory.CreateNewClient();
+
+            var result = await client.DeleteAsync(_url);
+
             return result;
         }
     }
