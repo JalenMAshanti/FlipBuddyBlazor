@@ -1,0 +1,98 @@
+﻿@using FlipBuddyWebApplication.Client.Components
+@using FlipBuddyWebApplication
+@using FlipBuddyWebApplication.Client.ViewModels
+@using FlipBuddyWebApplication.Domain.Models
+@using FlipBuddyWebApplication.Persistence.Repositories
+
+@inject ProductRepository ProductRepository
+
+<PageTitle>My Items</PageTitle>
+
+<!-- Page Content -->
+<div class="col d-flex flex-column full-height" style="width: 100%;">
+
+    <!-- Title Content -->
+    <div class="row my-3">
+        <div class="col-10 col-sm-6 col-md-4 col-lg-8">
+            <h1 class="fw-bold fs-3">My Products</h1>
+        </div>
+        <div class="col-2 col-sm-6 col-md-8 col-lg-4 d-flex align-items-center justify-content-center">
+            <div class="rounded-pill">
+                <h3 class="fw-bold m-0" style="font-size: 20px; text-align: center;">averyverlongusername</h3>
+            </div>
+        </div>
+    </div>
+
+    <!--Product Table-->
+    <div class="row">
+        @if (MyProducts is null)
+        {
+
+        }
+        else if (MyProducts.Count() == 0)
+        {
+
+        }
+        else if (MyProducts.Any())
+        {
+            <div class="container-fluid" style="box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3);">
+                <table class="table table-hover table-borderless">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Bought</th>
+                            <th scope="col">Sell</th>
+                            <th scope="col">Sold</th>
+                            <th scope="col">AI</th>
+                        </tr>               
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Product Name</td>
+                            <td>Category</td>
+                            <td style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100px;">Description for product in high detail</td>
+                            <td>12</td>
+                            <td>$12.99</td>
+                            <td>$20.00</td>
+                            <td><i class="bi bi-currency-dollar"></i></td>
+                            <td><i class="bi bi-stars"></i></td>
+                        </tr>
+
+                    </tbody>
+				</table>
+			</div>
+        }
+    </div>
+</div>
+
+
+
+<!-- Styles -->
+<style>
+    /* General Styles */
+    .rounded-pill {
+        background-color: #EAEEE5;
+        padding: 10px 25px;
+        display: inline-block;
+    }
+</style>
+
+
+@code
+{
+    [Parameter]
+    public string? UserGuid { get; set; }
+
+    private List<Product>? MyProducts { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        MyProducts = await ProductRepository.GetProductsByUserGuid(UserGuid);
+    }
+
+}

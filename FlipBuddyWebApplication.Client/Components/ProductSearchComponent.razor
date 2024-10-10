@@ -2,8 +2,11 @@
 @using FlipBuddyWebApplication
 @using FlipBuddyWebApplication.Domain.Models
 @using FlipBuddyWebApplication.Persistence.API
-@using FlipBuddyWebApplication.Persistence.API.ApiResponses
+@using FlipBuddyWebApplication.Persistence.API.ApiResponses;
+@using FlipBuddyWebApplication.Persistence.API.ApiResponses.UserResponses
+@using FlipBuddyWebApplication.Persistence.Repositories
 @inject ExternalApiService ExternalAPIService
+@inject CategoryRepository CategoryRepository
 @rendermode InteractiveServer
 
 <PageTitle>Search</PageTitle>
@@ -29,59 +32,153 @@
 
     <!-- Portfolio and Top Selling Categories Row -->
     <div class="row">
+		<div style="background-image: url('Images/SearchBackgroundImage.png');
+                    background-size:contain;
+                    background-repeat: no-repeat;
+                    background-position:center;
+                    height:300px;">
 
+            <h1 class="fs-1">Search for a product</h1>
+            
+		</div>
        
-       
+     
     </div>
 
     <div class="row">
-        <div class="col">
-            <div class="container">
-                @foreach (var category in Categories.Take(Categories.Count /2))
-                {
-					<div class="container rounded-3 shadow-sm py-1 my-4">
-						<div class="row px-3">
-							<div class="col-10">
-								<h5 class="fw-bold fs-5">@category.Name</h5><p>@category.Bio</p>
-							</div>
-							<div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
-								<h5 class="fw-bold fs-4">5K</h5>
-							</div>
-                        </div>                     
-                    </div>    
-                }
+        @if (Categories == null)
+        {           
+            <div class="col">
+                <div class="container pt-5 mt-5" style="display:flex; justify-content:center; align-content: center;">
+                    <div class="loader"></div>
+                </div>
             </div>
-        </div>
-        <div class="col">
-            <div class="container">
-                @foreach (var category in Categories.Skip(Categories.Count / 2))
-                {
-                    <div class="container rounded-3 shadow-sm py-1 my-4">
-                        <div class="row px-3">
-                            <div class="col-10">
-                                <h5 class="fw-bold fs-5">@category.Name</h5><p>@category.Bio</p>
-                            </div>
-                            <div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
-                                <h5 class="fw-bold fs-4">5K</h5>
+        }
+        else
+        {
+            <h1 class="fs-3 mb-3">Categories</h1>
+
+            <div class="col">
+                <div class="container">
+                    @foreach (var category in Categories.Take(Categories.Count / 4))
+                    {
+                        <div class="container rounded-3 shadow-sm py-1 my-4">
+                            <div class="row px-3">
+                                <div class="col-10">
+                                    <h5 class="fw-bold fs-5">@category.Name</h5>
+                                    <p>@category.Bio</p>
+                                </div>
+                                <div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
+                                    <h5 class="fw-bold fs-4">@category.ProductCount</h5>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
-        </div>
+
+            <!-- Second Column -->
+            <div class="col">
+                <div class="container">
+                    @foreach (var category in Categories.Skip(Categories.Count / 4).Take(Categories.Count / 4))
+                    {
+                        <div class="container rounded-3 shadow-sm py-1 my-4">
+                            <div class="row px-3">
+                                <div class="col-10">
+                                    <h5 class="fw-bold fs-5">@category.Name</h5>
+                                    <p>@category.Bio</p>
+                                </div>
+                                <div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
+                                    <h5 class="fw-bold fs-4">@category.ProductCount</h5>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Third Column -->
+            <div class="col">
+                <div class="container">
+                    @foreach (var category in Categories.Skip(Categories.Count / 2).Take(Categories.Count / 4))
+                    {
+                        <div class="container rounded-3 shadow-sm py-1 my-4">
+                            <div class="row px-3">
+                                <div class="col-10">
+                                    <h5 class="fw-bold fs-5">@category.Name</h5>
+                                    <p>@category.Bio</p>
+                                </div>
+                                <div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
+                                    <h5 class="fw-bold fs-4">@category.ProductCount</h5>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Fourth Column -->
+            <div class="col">
+                <div class="container">
+                    @foreach (var category in Categories.Skip(3 * (Categories.Count / 4)))
+                    {
+                        <div class="container rounded-3 shadow-sm py-1 my-4">
+                            <div class="row px-3">
+                                <div class="col-10">
+                                    <h5 class="fw-bold fs-5">@category.Name</h5>
+                                    <p>@category.Bio</p>
+                                </div>
+                                <div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
+                                    <h5 class="fw-bold fs-4">@category.ProductCount</h5>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     </div>
-  
 </div>
 
 
-<!-- Styles -->
 <style>
-    .rounded-pill {
-        background-color: #EAEEE5;
-        padding: 10px 25px;
-        display: inline-block;
+    
+    .loader {
+      width: 60px;
+      aspect-ratio: 1;
+      display: grid;
+      grid: 50%/50%;
+        color: #3E7E55;
+      --_g: no-repeat linear-gradient(currentColor 0 0);
+      background: var(--_g),var(--_g),var(--_g);
+      background-size: 50.1% 50.1%;
+      animation: 
+        l6-0   1.5s infinite steps(1) alternate,
+        l6-0-0 3s   infinite steps(1);
     }
-  
+    .loader::before {
+      content: "";
+      background: currentColor;
+      transform: perspective(150px) rotateY(0deg) rotateX(0deg);
+      transform-origin: bottom right; 
+      animation: l6-1 1.5s infinite linear alternate;
+    }
+    @@keyframes l6-0 {
+      0%  {background-position: 0    100%,100% 100%,100% 0}
+      33% {background-position: 100% 100%,100% 100%,100% 0}
+      66% {background-position: 100% 0   ,100% 0   ,100% 0}
+    }
+    @@keyframes l6-0-0 {
+      0%  {transform: scaleX(1)  rotate(0deg)}
+      50% {transform: scaleX(-1) rotate(-90deg)}
+    }
+    @@keyframes l6-1 {
+      16.5%{transform:perspective(150px) rotateX(-90deg)  rotateY(0deg)    rotateX(0deg);filter:grayscale(0.8)}
+      33%  {transform:perspective(150px) rotateX(-180deg) rotateY(0deg)    rotateX(0deg)}
+      66%  {transform:perspective(150px) rotateX(-180deg) rotateY(-180deg) rotateX(0deg)}
+      100% {transform:perspective(150px) rotateX(-180deg) rotateY(-180deg) rotateX(-180deg);filter:grayscale(0.8)}
+    }
+
 </style>
 
 @code
@@ -90,8 +187,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var response = (await ExternalAPIService.GetAPIResponse<GetAllCategoriesAPIResponse>("https://localhost:7294/Category/GetAllCategories"));
-        ArgumentNullException.ThrowIfNull(response.categories);
-        Categories = response.categories.Select(_ => _.AsDomainCategory()).ToList();
+        Categories = await CategoryRepository.GetAllCategories();
     }
 }

@@ -1,13 +1,11 @@
-﻿using FlipBuddyWebApplication.Persistence.API.ApiResponses;
-using FlipBuddyWebApplication.Domain.Models;
+﻿using FlipBuddyWebApplication.Domain.Models;
 namespace FlipBuddyWebApplication.Client.ViewModels
 {
-	public class HomeViewModel
-	{
-		public HomeViewModel() { }
+    public class HomeViewModel
+    {
+        public HomeViewModel() { }
 
-		public User? User { get; set; }
-		//public EarningStats Earnings { get; set; }
-		public List<Product>? RecentlyListedItems { get; set; }
-	}
+        public User? User { get; set; }
+        public List<Product>? RecentlyListedItems { get; set; } 
+    }
 }

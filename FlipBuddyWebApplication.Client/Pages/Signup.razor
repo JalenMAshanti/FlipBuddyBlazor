@@ -1,9 +1,11 @@
 ﻿@page "/signup"
 
 @using FlipBuddyWebApplication.Domain.Models;
-@using FlipBuddyWebApplication.Persistence.API;
 @using FlipBuddyWebApplication.Persistence.API.ApiResponses
-@inject ExternalApiService ExternalApiService
+@using FlipBuddyWebApplication.Persistence.Repositories
+@using System.Net
+@inject UserRepository UserRepository
+@inject GuidRepository GuidRepository
 @inject NavigationManager NavigationManager
 @inject IJSRuntime jSRuntime
 
@@ -18,7 +20,7 @@
 				</div>
 
 				<div class="col-6 col-sm-8 d-flex justify-content-end">
-					<a href="/login" class="btn fw-bold text-black">Log in</a>
+					<a href="/login" class="btn fw-bold text-black focus-ring focus-ring-dark">Log in</a>
 					<a class="btn text-white fw-bold rounded-3 ms-5 shadow" style="background:#3E7E55;">Request Demo</a>
 				</div>
 			</div>
@@ -143,23 +145,25 @@
 
 	private async Task HandleSignup()
 	{
-		string response = string.Empty;
+		HttpResponseMessage? status = null;
+
 		try
 		{
-			signupRequest.Guid = Guid.Parse(await ExternalApiService.GetAPIResponse<string>($"https://localhost:7294/Guid/GetNewGuid"));
-			response = await ExternalApiService.PostAPIRequest($"https://localhost:7294/User/InsertUser", signupRequest);
+			signupRequest.Guid = GuidRepository.GetNewGuid();
+			status = await UserRepository.InsertUserByGuidAsync(signupRequest);
 		}
-		catch 
-		{
+		catch
+		{		
 			NavigationManager.NavigateTo("/signup");
+			return; 
 		}
 
-		if(string.IsNullOrEmpty(response))
+		if (status != null && status.StatusCode == HttpStatusCode.OK)
 		{
-			NavigationManager.NavigateTo("/login");
-			await Task.CompletedTask;	
+			NavigationManager.NavigateTo("/login");			
+			return; 
 		}
 
-		NavigationManager.NavigateTo("/signup");			
+		NavigationManager.NavigateTo("/signup");
 	}
 }

@@ -1,5 +1,10 @@
 ﻿@using FlipBuddyWebApplication.Client.Components
 @using FlipBuddyWebApplication
+@using FlipBuddyWebApplication.Client.ViewModels
+@using FlipBuddyWebApplication.Persistence.API
+
+@inject ExternalApiService ExternalApiService
+
 <PageTitle>Dashboard</PageTitle>
 
 <!-- Page Content -->
@@ -159,3 +164,15 @@
         background-position:center;
     }
 </style>
+
+
+@code
+{
+    private HomeViewModel homeViewModel { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+   
+    }
+}
