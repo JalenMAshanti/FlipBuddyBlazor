@@ -1,6 +1,7 @@
 using FlipBuddyWebApplication.Components;
 using FlipBuddyWebApplication.Persistence.API;
 using FlipBuddyWebApplication.Persistence.Factories;
+using FlipBuddyWebApplication.Persistence.Repositories;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,10 +13,18 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
+//Services
 builder.Services.AddMudServices();
 builder.Services.AddTransient<HttpClient>();
 builder.Services.AddTransient<ExternalApiService>();
 builder.Services.AddTransient<ClientFactory>();
+
+//Repositories
+builder.Services.AddTransient<UserRepository>();
+builder.Services.AddTransient<ProductRepository>();
+builder.Services.AddTransient<CategoryRepository>();
+builder.Services.AddTransient<GuidRepository>();
+builder.Services.AddTransient<LoginRepository>();
 
 var app = builder.Build();
 

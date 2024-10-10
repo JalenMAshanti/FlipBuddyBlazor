@@ -1,3 +1,8 @@
 ﻿body {
     font-family: 'Urbanist', sans-serif;
 }
+
+.btn-primary {
+    background-color: #3E7E55;
+}
+
