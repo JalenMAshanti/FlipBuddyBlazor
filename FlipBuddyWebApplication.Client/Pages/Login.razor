@@ -1,9 +1,9 @@
 ﻿@page "/login"
 
 @using FlipBuddyWebApplication.Domain.Models;
-@using FlipBuddyWebApplication.Persistence.API.ApiResponses;
 @using FlipBuddyWebApplication.Persistence.API.ApiResponses.LoginResponses
 @using FlipBuddyWebApplication.Persistence.Repositories
+
 @inject LoginRepository LoginRepository
 @inject NavigationManager NavigationManager
 @inject IJSRuntime jSRuntime
@@ -80,8 +80,9 @@
 	}
 </style>
 
-@code {
-	
+@code {	
+	public string? UserGuid = string.Empty;
+
 	[SupplyParameterFromForm]
 	private LoginRequest loginRequest { get; set; } = new LoginRequest()
 	{
@@ -92,21 +93,20 @@
 
 	private async Task HandleLogin()
 	{
-		string? response = string.Empty;
+
 		try
 		{
-			response = (await LoginRepository.Login(loginRequest)).userGuid.guid;
+			UserGuid = (await LoginRepository.Login(loginRequest)).userGuid.guid;
 		}
 		catch 
 		{
 			NavigationManager.NavigateTo("/login");
 		}
 
-		if(response is not null)
+		if(!string.IsNullOrEmpty(UserGuid))
 		{
 			NavigationManager.NavigateTo("/dashboard");
 			await Task.CompletedTask;	
-
 		}
 
 		NavigationManager.NavigateTo("/login");			
