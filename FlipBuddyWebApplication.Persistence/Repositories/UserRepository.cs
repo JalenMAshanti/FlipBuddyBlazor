@@ -11,7 +11,7 @@ namespace FlipBuddyWebApplication.Persistence.Repositories
 		{
 		}
 
-		public async Task<User> GetUserByGuidAsync(Guid guid) => (await _externalApiService.GetAPIResponse<GetUserByGuidResponse>($"https://localhost:7294/User/GetUserByGuid?UserGuid={guid}")).AsDomainUser();
+		public async Task<User> GetUserByGuidAsync(string guid) => (await _externalApiService.GetAPIResponse<GetUserByGuidResponse>($"https://localhost:7294/User/GetUserByGuid?UserGuid={guid}")).AsDomainUser();
 
 		public async Task<HttpResponseMessage> DeleteUserByGuidAsync() => await _externalApiService.DeleteAPIRequest("https://localhost:7294/User/DeleteUserByGuid");
 
