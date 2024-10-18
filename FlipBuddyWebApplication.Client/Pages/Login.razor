@@ -1,13 +1,9 @@
 ﻿@page "/login"
 
-@using FlipBuddyWebApplication.Domain.Models;
-@using FlipBuddyWebApplication.Persistence.API.ApiResponses.LoginResponses
-@using FlipBuddyWebApplication.Persistence.Repositories
-
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject LoginRepository LoginRepository
 @inject NavigationManager NavigationManager
-@inject IJSRuntime jSRuntime
-
+@inject GoogleAuthService AuthService
 
 
 <div class="" style="background:#EAEEE5; height:100vh; width:100%; ">
@@ -35,15 +31,15 @@
 						<DataAnnotationsValidator />
 						<div class="mb-3">
 							<label for="username" class="form-label fw-bold">Username</label>
-							<InputText @bind-Value="loginRequest.Username" class="form-control fw-bold" id="username placeholder="name@example.com" />
+							<InputText @bind-Value="loginRequest.Username" class="form-control fw-bold" id="username" />
 							<ValidationMessage For="()=> loginRequest.Username" />
 						</div>
 
 						<label for="password" class="form-label fw-bold">Password</label>
-						<InputText @bind-Value="loginRequest.Password" type="password" id="password" class="form-control fw-bold" aria-describedby="passwordHelpBlock" />
+						<InputText @bind-Value="loginRequest.Password" type="password" id="password" class="form-control fw-bold"/>
 						<ValidationMessage For="()=> loginRequest.Password" />
 						<div id="passwordHelpBlock" class="form-text">
-							Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+							Remember me
 						</div>
 
 
@@ -57,7 +53,7 @@
 					<h1 class="fw-bold text-secondary text-center fs-6 m-4">Or sign in with</h1>
 
 					<div class="d-grid gap-2">
-						<a href="#" class="btn btn-light shadow-sm fw-bold" type="button"><i class="bi bi-google"></i>   Google</a>
+						<a href="/google-auth/" class="btn btn-light shadow-sm fw-bold" type="button"><i class="bi bi-google"></i>   Google</a>
 						<a href="#" class="btn btn-light shadow-sm fw-bold" type="button">Ebay</a>
 					</div>
 				</div>
@@ -80,8 +76,8 @@
 	}
 </style>
 
-@code {	
-	public string? UserGuid = string.Empty;
+@code {
+	public string? UserGuid { get; set; } = string.Empty;
 
 	[SupplyParameterFromForm]
 	private LoginRequest loginRequest { get; set; } = new LoginRequest()
@@ -90,6 +86,16 @@
 		Password = string.Empty,
 	};
 
+	protected async override void OnAfterRender(bool firstRender)
+	{
+		//automatic login
+		var persistingGuid = await localStorage.GetItemAsync<string>("UsersGuid");
+		if(!string.IsNullOrEmpty(persistingGuid))
+		{
+			NavigationManager.NavigateTo($"/dashboard/{ApplicationPages.HomePage}");
+			return;
+		}
+	}
 
 	private async Task HandleLogin()
 	{
@@ -97,18 +103,22 @@
 		try
 		{
 			UserGuid = (await LoginRepository.Login(loginRequest)).userGuid.guid;
+			await localStorage.SetItemAsync("UsersGuid", UserGuid);
 		}
 		catch 
 		{
 			NavigationManager.NavigateTo("/login");
+			return;
 		}
 
 		if(!string.IsNullOrEmpty(UserGuid))
 		{
-			NavigationManager.NavigateTo("/dashboard");
-			await Task.CompletedTask;	
+			NavigationManager.NavigateTo($"/dashboard/{ApplicationPages.HomePage}");
+			return;
+
 		}
 
-		NavigationManager.NavigateTo("/login");			
+		NavigationManager.NavigateTo("/login");
+		return;
 	}
 }
