@@ -14,7 +14,6 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
             _clientFactory = clientFactory;
         }
 
-
         public async Task<TResponse> GetAPIResponse<TResponse>(string _url)
         {
             var client = ClientFactory.CreateNewClient();
@@ -55,12 +54,21 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
             string json = JsonSerializer.Serialize(body);
 
             var data = new StringContent(json, Encoding.UTF8, "application/json");
+            try
+            {
+                var response = await client.PostAsync("", data);
 
-            var response = await client.PostAsync("", data);
-            
-            client.Dispose();
+                client.Dispose();
 
-            return response;
+                return response;
+            }
+            catch 
+            {
+                HttpResponseMessage message = new HttpResponseMessage();
+                message.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                message.Content = data;
+                return message;
+            }
         }
 
         public async Task<HttpResponseMessage> PutAPIRequest(string _url, Object body)
