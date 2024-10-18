@@ -1,0 +1,112 @@
+﻿@switch (CategoryId)
+{
+    //
+    case 1:
+        <i class="bi bi-tag py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize;  color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 2:
+        <i class="bi bi-phone py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 3:
+        <i class="bi bi-handbag py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 4:
+        <i class="bi bi-house py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 5:
+        <i class="bi bi-book py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 6:
+        <i class="bi bi-puzzle py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 7:
+        <i class="bi bi-controller py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 8:
+        <i class="bi bi-nut py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 9:
+        <i class="bi bi-dribbble py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 10:
+        <i class="bi bi-cassette py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 11:
+        <i class="bi bi-eyedropper py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 12:
+        <i class="bi bi-brush py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 13:
+        <i class="bi bi-car-front py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 14:
+        <i class="bi bi-music-note py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 15:
+        <i class="bi bi-music-note py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 16:
+        <i class="bi bi-tv py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 17:
+        <i class="bi bi-lamp py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 18:
+        <i class="bi bi-heart-pulse py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 19:
+        <i class="bi bi-building py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 20:
+        <i class="bi bi-cup py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 21:
+        <i class="bi bi-watch py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 22:
+        <i class="bi bi-question-lg py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+    case 23:
+        <i class="bi bi-box2 py-2 px-3 rounded-3 shadow-sm" style="font-size:@FontSize; color:@TextColor; background-color:@Color;"></i>
+        break;
+
+}
+
+
+@code {
+
+    [Parameter]
+    public string FontSize { get; set; } = "30px";
+
+    [Parameter]
+    public int CategoryId { get; set; } = 22;
+
+    [Parameter]
+    public string Color { get; set; } = "#2979FF";
+
+    [Parameter]
+    public string TextColor { get; set; } = "#FFFFFF";
+}
