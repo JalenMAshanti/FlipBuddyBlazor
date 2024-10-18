@@ -35,5 +35,11 @@
         public int ConditionId { get; set; }
         public string Barcode { get; set; }
         public string DateSold { get; set; }
+
+        public decimal CalculateProfit() 
+        {
+            var profit = SellPrice - PurchasePrice;
+            return profit;
+        }
     }
 }
