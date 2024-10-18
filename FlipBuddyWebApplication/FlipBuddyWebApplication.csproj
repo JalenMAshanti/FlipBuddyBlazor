@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -10,8 +10,10 @@
     <ProjectReference Include="..\FlipBuddyWebApplication.Client\FlipBuddyWebApplication.Client.csproj" />
     <ProjectReference Include="..\FlipBuddyWebApplication.Domain\FlipBuddyWebApplication.Domain.csproj" />
     <ProjectReference Include="..\FlipBuddyWebApplication.Persistence\FlipBuddyWebApplication.Persistence.csproj" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.10" />
+	<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0" />
     <PackageReference Include="Blazor-ApexCharts" Version="3.4.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.5" />
     <PackageReference Include="MudBlazor" Version="7.8.0" />
   </ItemGroup>
 
