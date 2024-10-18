@@ -9,8 +9,8 @@ namespace FlipBuddyWebApplication.Persistence.API.ApiResponses.ProductResponses
         public string? userGuid { get; set; } = string.Empty;
         public string title { get; set; }= string.Empty;
         public int categoryId { get; set; }
-        public int purchasedPrice { get; set; }
-        public int sellPrice { get; set; }
+        public decimal purchasedPrice { get; set; }
+        public decimal sellPrice { get; set; }
         public string description { get; set; } = string.Empty;
         public int quantity { get; set; }
         public string currency { get; set; } = string.Empty;
