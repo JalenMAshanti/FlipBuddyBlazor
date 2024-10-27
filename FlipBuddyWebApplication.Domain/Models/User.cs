@@ -9,7 +9,8 @@
 					string lastName,
 					string password,
 					string email,
-					int subscriptionTier) 
+					int subscriptionTier,
+					int flips) 
 		{
 			Username = username;
 			FirstName = firstName;
@@ -17,6 +18,7 @@
 			Password = password;
 			Email = email;
 			SubscriptionTier = subscriptionTier;
+			Flips = flips;
 		}	
 
 		public string Username { get; set; } = string.Empty;
@@ -25,5 +27,6 @@
 		public string Password { get; set; } = string.Empty;
 		public string Email { get; set; } = string.Empty;
 		public int SubscriptionTier { get; set; }
+		public int Flips { get; set; }
 	}
 }

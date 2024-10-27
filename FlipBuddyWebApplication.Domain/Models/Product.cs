@@ -2,7 +2,8 @@
 {
     public class Product
     {
-        public Product(string title,
+        public Product(string productGuid,
+                        string title,
                         int categoryId,
                         decimal puchasePrice,
                         decimal sellPrice,
@@ -13,6 +14,7 @@
                         string barcode,
                         string dateSold)
         {
+            ProductGuid = productGuid;
             Title = title;
             CategoryId = categoryId;
             PurchasePrice = puchasePrice;
@@ -25,6 +27,7 @@
             DateSold = dateSold;
         }
 
+        public string ProductGuid { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public int CategoryId { get; set; }
         public decimal PurchasePrice { get; set; }
