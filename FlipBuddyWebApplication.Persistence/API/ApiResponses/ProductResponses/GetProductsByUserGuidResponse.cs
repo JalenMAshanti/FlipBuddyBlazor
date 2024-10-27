@@ -16,15 +16,14 @@ namespace FlipBuddyWebApplication.Persistence.API.ApiResponses.ProductResponses
         public string currency { get; set; } = string.Empty;
         public int conditionId { get; set; }
         public string barCode { get; set; } = string.Empty;
+        public string dateSold { get; set; } = string.Empty;    
 
-        public Product AsDomainProduct() => new(title, categoryId, purchasedPrice, sellPrice, description, quantity, currency, conditionId, barCode, "");
+        public Product AsDomainProduct() => new(guid, title, categoryId, purchasedPrice, sellPrice, description, quantity, currency, conditionId, barCode, dateSold);
     }
 
     public class GetProductsByUserGuidResponse
     {
         public List<ProductResponse>? products { get; set; }
     }
-
-
 
 }
