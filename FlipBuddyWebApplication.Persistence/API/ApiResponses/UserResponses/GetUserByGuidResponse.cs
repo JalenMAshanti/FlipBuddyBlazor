@@ -7,7 +7,7 @@ namespace FlipBuddyWebApplication.Persistence.API.ApiResponses.UserResponses
     {
         public UserResponse user { get; set; } = new UserResponse();
 
-        public User AsDomainUser() => new(user.username, user.firstName, user.lastName, user.password, user.email, user.subscriptionTier);
+        public User AsDomainUser() => new(user.username, user.firstName, user.lastName, user.password, user.email, user.subscriptionTier, user.flips);
     }
 
     public class UserResponse
@@ -20,8 +20,7 @@ namespace FlipBuddyWebApplication.Persistence.API.ApiResponses.UserResponses
         public string passwordHash { get; set; } = string.Empty;
         public string email { get; set; } = string.Empty;
         public int subscriptionTier { get; set; }
-
+        public int flips { get; set; }
 
     }
-
 }
