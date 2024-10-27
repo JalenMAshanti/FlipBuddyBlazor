@@ -7,5 +7,7 @@ namespace FlipBuddyWebApplication.Client.ViewModels.Inventory
         public List<Product>? MyProducts { get; set; }
         public List<Category>? AllCategories { get; set; }
 
+        public bool isLoading = true;
+
     }
 }
