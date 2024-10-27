@@ -10,10 +10,10 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
         private readonly ClientFactory _clientFactory;
         public APIService(ClientFactory clientFactory)
         {
-
             _clientFactory = clientFactory;
         }
 
+        #region GetSingleRequest
         public async Task<TResponse> GetAPIResponse<TResponse>(string _url)
         {
             var client = ClientFactory.CreateNewClient();
@@ -24,7 +24,9 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
 
             return result;
         }
+        #endregion
 
+        #region Get List Request
         public async Task<IEnumerable<TResponse>> GetListAPIResponse<TResponse>(string _url)
         {
             try
@@ -43,7 +45,9 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
                 return new List<TResponse>();
             }
         }
+        #endregion
 
+        #region Post Request
         public async Task<HttpResponseMessage> PostAPIRequest(string _url, Object body)
         {
 
@@ -70,7 +74,9 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
                 return message;
             }
         }
+        #endregion
 
+        #region Put Request
         public async Task<HttpResponseMessage> PutAPIRequest(string _url, Object body)
         {
             var client = ClientFactory.CreateNewClient();
@@ -87,7 +93,9 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
 
             return response;
         }
+        #endregion
 
+        #region Delete Request
         public async Task<HttpResponseMessage> DeleteAPIRequest(string _url) 
         {
             var client = ClientFactory.CreateNewClient();
@@ -96,5 +104,6 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
 
             return result;
         }
+        #endregion
     }
 }
