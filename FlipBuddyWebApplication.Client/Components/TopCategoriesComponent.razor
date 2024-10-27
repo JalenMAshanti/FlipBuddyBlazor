@@ -1,28 +1,82 @@
-﻿
+﻿@using FlipBuddyWebApplication.Client.ViewModels.TopCategories
+@using FlipBuddyWebApplication.Domain.CachedData
+@using FlipBuddyWebApplication.Domain.Models
+
+@inject TopCategoriesViewModel ViewModel
+@inject TopCategoriesClient Client
 
 <div class="pb-3">
     <table class="table table-borderless" style="border-spacing:0,10px;">
         <tbody>
-            <tr class="fw-bold ">             
-                <td><i class="bi bi-phone py-2 px-3 rounded-3 shadow-sm" style="font-size:30px; color:white; background-color:#2979FF;"></i></td>
-                <td class="fs-5">Mobile Devices</td>
-          
 
-            </tr>
-            <tr class="fw-bold ">              
-                <td><i class="bi bi-joystick py-2 px-3 rounded-3 shadow-sm" style="font-size:30px; color:white; background:#1DE9B6;"></i></td>
-                <td class="fs-5">Video Games</td>
+            @if (TopCategories is null)
+            {
+                <tr>
+                    <td>Error loading data</td>
+                </tr>
+            }
+            else if (!TopCategories.Any())
+            {
+                <tr>
+                    <td>No lists yet</td>
+                </tr>
+            }
+            else
+            {
+                if (TopCategories.Count() <= 3)
+                {
+                    @for (var i = 0; i < TopCategories.Count(); i++)
+                    {
+                        var category = TopCategories[i];
+                        var backgroundColor = Colors[i];
 
-            </tr>
-            <tr class="fw-bold ">
-                <td><i class="bi bi-handbag py-2 px-3 rounded-3 shadow-sm" style="font-size:30px; color:white; background:#FFC400"></i></td>
-                <td class="fs-5">Accessories</td>
+                        <tr class="fw-bold ">
+                            <td><CategoryIconComponent Color="@backgroundColor" CategoryId="category" /></td>
+                            <td class="fs-5">@Client._productRepository.GetCategory(category, AllCategories)</td>
+                        </tr>
+                    }
+                }
+                else
+                {
 
-            </tr>
+                    @for (var i = 0; i < 3; i++)
+                    {
+                        var category = TopCategories[i];
+                        var backgroundColor = Colors[i];
+
+                        <tr class="fw-bold ">
+                            <td><CategoryIconComponent Color="@backgroundColor" CategoryId="category" /></td>
+                            <td class="fs-5">@Client._productRepository.GetCategory(category, AllCategories)</td>
+                        </tr>
+                    }
+
+                    
+                    <tr class="fw-bold">
+                        <td><CategoryIconComponent Color="@Colors[3]" CategoryId="23" /></td>
+                        <td class="fs-5">Others</td>
+                    </tr>
+                }
+            }
+
         </tbody>
     </table>
 </div>
 
 @code {
+
+    [Parameter]
+    public List<Product> Products { get; set; } = new List<Product>();
+
+    public List<Category> AllCategories = CachedAppData.AllCategoies;
+
+    public List<int> TopCategories { get; set; } = new List<int>();
+
+    public List<string> Colors = ["#3E7E55", "#CADEC8", "#E2E9D8", "#EAEEE5"];
+
+    protected async override Task OnInitializedAsync()
+    {       
+        TopCategories = Products.GroupBy(p => p.CategoryId).OrderByDescending(g => g.Count()).Select(g => g.Key).ToList();
+        await Task.CompletedTask;
+    }
 
 }

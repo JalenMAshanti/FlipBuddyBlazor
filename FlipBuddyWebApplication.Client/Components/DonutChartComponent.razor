@@ -1,32 +1,66 @@
-﻿@using FlipBuddyWebApplication.Domain.Models
-@rendermode InteractiveServer
-
+﻿@using FlipBuddyWebApplication.Client.ViewModels.Home.DonutChart
+@using FlipBuddyWebApplication.Domain.CachedData
+@using FlipBuddyWebApplication.Domain.Models
 @using Blazor_ApexCharts
+@using FlipBuddyWebApplication.Persistence.Repositories
 @using MudBlazor
 
+@inject DonutChartViewModelClient Client
+@inject DonutChartViewModel ViewModel
 
+@rendermode InteractiveServer
 
-
-
-<MudChart ChartType="MudBlazor.ChartType.Donut" Width="250px" Height="250px" InputData="@data" ChartOptions="chartOptions">
+<MudChart ChartType="MudBlazor.ChartType.Donut" Width="250px" Height="250px" InputData="@ViewModel.GraphData" ChartOptions="chartOptions">
     <CustomGraphics>
             
-			<text class="donut-inner-text" x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Urbanist" font-size="3">Total</text>
-			<text class="donut-inner-text" x="50%" y="59%" dominant-baseline="middle" text-anchor="middle" fill="black" font-weight="Bold" font-family="Urbanist" font-size="7">@data.Sum().ToString()</text>
+			<text class="donut-inner-text" x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Urbanist" font-size="3">Listings</text>
+			<text class="donut-inner-text" x="50%" y="59%" dominant-baseline="middle" text-anchor="middle" fill="black" font-weight="Bold" font-family="Urbanist" font-size="7">@ViewModel.TotalProductsListed</text>
        
        
     </CustomGraphics>
 </MudChart>
 
 @code {
-    public double[] data = { 78, 46, 12};
-    public string[] labels = { "Mobile Devices", "VideoGames", "Accessories"};
+    [Parameter]
+    public List<Product> Products { get; set; } = new List<Product>();
 
-    // Chart options with ShowLegend set to false
-    private ChartOptions chartOptions = new ChartOptions
+    public List<Category> Categories = CachedAppData.AllCategoies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ViewModel.TotalProductsListed = Products.Count();
+        ViewModel.GraphData = Products.GroupBy(p => p.CategoryId).OrderByDescending(g => g.Count()).Select(g => (double)g.Count()).ToArray();
+
+        var groupedProducts = Products
+                .GroupBy(p => p.CategoryId)
+                .OrderByDescending(g => g.Count())
+                .ToList();
+
+        // Take top 3 categories
+        var top3 = groupedProducts
+                .Take(3)
+                .Select(g => (double)g.Count())
+                .ToList();
+
+        // Sum the counts for the remaining categories
+        var othersCount = groupedProducts
+                .Skip(3)
+                .Sum(g => (double)g.Count());
+
+        if (othersCount > 0)
         {
-            ShowLegend = false, // This hides the legend (key)
-           
-        };
+            top3.Add(othersCount);
+        }
+
+        ViewModel.GraphData = top3.ToArray();
+
+        await Task.CompletedTask;
+    }
+
+    private ChartOptions chartOptions = new ChartOptions
+    {
+            ChartPalette = new string[] { "#3E7E55", "#CADEC8", "#E2E9D8", "#EAEEE5"},
+            ShowLegend = false, 
+    };
 }
 

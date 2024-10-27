@@ -1,143 +1,146 @@
 ﻿@using FlipBuddyWebApplication.Client.Components
 @using FlipBuddyWebApplication
+@using FlipBuddyWebApplication.Client.ViewModels.Search
+@using FlipBuddyWebApplication.Domain.CachedData
 @using FlipBuddyWebApplication.Domain.Models
 @using FlipBuddyWebApplication.Persistence.API
 @using FlipBuddyWebApplication.Persistence.API.ApiResponses;
 @using FlipBuddyWebApplication.Persistence.API.ApiResponses.UserResponses
 @using FlipBuddyWebApplication.Persistence.Repositories
-@inject ExternalApiService ExternalAPIService
-@inject CategoryRepository CategoryRepository
+
+@inject SearchViewModel ViewModel
+@inject SearchViewModelClient Client
+
 @rendermode InteractiveServer
+
+@page "/explore"
 
 <PageTitle>Search</PageTitle>
 
 <!-- Page Content -->
 <div class="col d-flex flex-column full-height" style="width: 100%;">
+    <div class="container">
+		<!-- Overview Row -->
+		<div class="row my-3">
+			<div class="col-2">
+				<h1 class="fw-bold fs-3">Explore</h1>
+			</div>
+			<div class="col">
+				<div class="input-group mb-3">
+					<span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
+					<input type="text" class="form-control" placeholder="Search by product name or barcode" aria-label="Search" aria-describedby="basic-addon1">
+				</div>
+			</div>
+			<div class="col-2">
+			</div>
+		</div>
 
-    <!-- Overview Row -->
-    <div class="row my-3">
-        <div class="col-2">
-            <h1 class="fw-bold fs-3">Explore</h1>
-        </div>
-        <div class="col">
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
-              <input type="text" class="form-control" placeholder="Search by product name or barcode" aria-label="Search" aria-describedby="basic-addon1">
-            </div>
-        </div>
-        <div class="col-2">
-            
-        </div>
-    </div>
-
-    <!-- Portfolio and Top Selling Categories Row -->
-    <div class="row">
-		<div style="background-image: url('Images/SearchBackgroundImage.png');
+		<!-- Portfolio and Top Selling Categories Row -->
+		<div class="row">
+			<div style="background-image: url('Images/SearchBackgroundImage.png');
                     background-size:contain;
                     background-repeat: no-repeat;
                     background-position:center;
                     height:300px;">
 
-            <h1 class="fs-2">Search for a product</h1>
-            
+				<h1 class="fs-2">Search for a product</h1>
+			</div>
 		</div>
-       
-     
-    </div>
 
-    <div class="row">
-        @if (Categories == null)
-        {           
-            <div class="col">
-                <div class="container pt-5 mt-5" style="display:flex; justify-content:center; align-content: center;">
-                    <div class="loader"></div>
-                </div>
-            </div>
-        }
-        else
-        {
-            <h1 class="fs-3 mb-3">Categories</h1>
+		<div class="row">
+			<h1 class="fs-3 mb-3">Categories</h1>
 
-            <div class="col">
-                <div class="container">
-                    @foreach (var category in Categories.Take(Categories.Count / 4))
-                    {
-                        <div class="container rounded-3 shadow-sm py-1 my-4">
-                            <div class="row px-3">
-                                <div class="col-10">
-                                    <h5 class="fw-bold fs-5">@category.Name</h5>
-                                    <p>@category.Bio</p>
-                                </div>
-                                <div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
-                                    <h5 class="fw-bold fs-4">@category.ProductCount</h5>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
+			@if (ViewModel.Categories == null)
+			{
+				<div class="col">
+					<div class="container pt-5 mt-5" style="display:flex; justify-content:center; align-content: center;">
+						<div class="loader"></div>
+					</div>
+				</div>
+			}
+			else
+			{
+				<div class="col-sm-12 col-md-12 col-lg-3">
+					<div class="container">
+						@foreach (var category in ViewModel.Categories.Take(ViewModel.Categories.Count / 4))
+						{
+							<div class="container rounded-3 shadow-sm py-1 my-4">
+								<div class="row px-3">
+									<div class="col-10">
+										<h5 class="fw-bold fs-5">@category.Name</h5>
+										<p>@category.Bio</p>
+									</div>
+									<div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
+										<h5 class="fw-bold fs-4">@category.ProductCount</h5>
+									</div>
+								</div>
+							</div>
+						}
+					</div>
+				</div>
 
-            <!-- Second Column -->
-            <div class="col">
-                <div class="container">
-                    @foreach (var category in Categories.Skip(Categories.Count / 4).Take(Categories.Count / 4))
-                    {
-                        <div class="container rounded-3 shadow-sm py-1 my-4">
-                            <div class="row px-3">
-                                <div class="col-10">
-                                    <h5 class="fw-bold fs-5">@category.Name</h5>
-                                    <p>@category.Bio</p>
-                                </div>
-                                <div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
-                                    <h5 class="fw-bold fs-4">@category.ProductCount</h5>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
+				<!-- Second Column -->
+				<div class="col-sm-12 col-md-12 col-lg-3">
+					<div class="container">
+						@foreach (var category in ViewModel.Categories.Skip(ViewModel.Categories.Count / 4).Take(ViewModel.Categories.Count / 4))
+						{
+							<div class="container rounded-3 shadow-sm py-1 my-4">
+								<div class="row px-3">
+									<div class="col-10">
+										<h5 class="fw-bold fs-5">@category.Name</h5>
+										<p>@category.Bio</p>
+									</div>
+									<div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
+										<h5 class="fw-bold fs-4">@category.ProductCount</h5>
+									</div>
+								</div>
+							</div>
+						}
+					</div>
+				</div>
 
-            <!-- Third Column -->
-            <div class="col">
-                <div class="container">
-                    @foreach (var category in Categories.Skip(Categories.Count / 2).Take(Categories.Count / 4))
-                    {
-                        <div class="container rounded-3 shadow-sm py-1 my-4">
-                            <div class="row px-3">
-                                <div class="col-10">
-                                    <h5 class="fw-bold fs-5">@category.Name</h5>
-                                    <p>@category.Bio</p>
-                                </div>
-                                <div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
-                                    <h5 class="fw-bold fs-4">@category.ProductCount</h5>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
+				<!-- Third Column -->
+				<div class="col-sm-12 col-md-12 col-lg-3">
+					<div class="container">
+						@foreach (var category in ViewModel.Categories.Skip(ViewModel.Categories.Count / 2).Take(ViewModel.Categories.Count / 4))
+						{
+							<div class="container rounded-3 shadow-sm py-1 my-4">
+								<div class="row px-3">
+									<div class="col-10">
+										<h5 class="fw-bold fs-5">@category.Name</h5>
+										<p>@category.Bio</p>
+									</div>
+									<div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
+										<h5 class="fw-bold fs-4">@category.ProductCount</h5>
+									</div>
+								</div>
+							</div>
+						}
+					</div>
+				</div>
 
-            <!-- Fourth Column -->
-            <div class="col">
-                <div class="container">
-                    @foreach (var category in Categories.Skip(3 * (Categories.Count / 4)))
-                    {
-                        <div class="container rounded-3 shadow-sm py-1 my-4">
-                            <div class="row px-3">
-                                <div class="col-10">
-                                    <h5 class="fw-bold fs-5">@category.Name</h5>
-                                    <p>@category.Bio</p>
-                                </div>
-                                <div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
-                                    <h5 class="fw-bold fs-4">@category.ProductCount</h5>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        }
-    </div>
+				<!-- Fourth Column -->
+				<div class="col-sm-12 col-md-12 col-lg-3">
+					<div class="container">
+						@foreach (var category in ViewModel.Categories.Skip(3 * (ViewModel.Categories.Count / 4)))
+						{
+							<div class="container rounded-3 shadow-sm py-1 my-4">
+								<div class="row px-3">
+									<div class="col-10">
+										<h5 class="fw-bold fs-5">@category.Name</h5>
+										<p>@category.Bio</p>
+									</div>
+									<div class="col-2" style=" display:flex; justify-content:center; align-items:center;">
+										<h5 class="fw-bold fs-4">@category.ProductCount</h5>
+									</div>
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+			}
+		</div>
+    </div>   
 </div>
 
 
@@ -183,10 +186,9 @@
 
 @code
 {
-    private List<Category> Categories { get; set; } = new List<Category>();
-
     protected override async Task OnInitializedAsync()
     {
-        Categories = await CategoryRepository.GetAllCategories();
+        CachedAppData.AllCategoies = await Client._categoryRepository.GetAllCategories();
+        ViewModel.Categories = CachedAppData.AllCategoies;
     }
 }

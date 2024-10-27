@@ -1,48 +1,43 @@
-﻿<div class="fade-container">
-    <table class="table table-borderless">
-        <tbody>
-            <tr class="fw-bold">
-                <th scope="row">1</th>
-                <td><i class="bi bi-joystick py-2 px-3 rounded-3 shadow-sm" style="font-size:23px; background:white;"></i></td>
-                <td>Product Title</td>
-                <td>$34.84</td>
-                <td>Sold</td>
-                <td>Reviewed</td>
-            </tr>
-            <tr class="fw-bold">
-                <th scope="row">2</th>
-                <td><i class="bi bi-joystick py-2 px-3 rounded-3 shadow-sm" style="font-size:23px; background:white;"></i></td>
-                <td>Product Title</td>
-                <td>$34.84</td>
-                <td>Sold</td>
-                <td>Reviewed</td>
-            </tr>
-            <tr class="fw-bold">
-                <th scope="row">3</th>
-                <td><i class="bi bi-joystick py-2 px-3 rounded-3 shadow-sm" style="font-size:23px; background:white;"></i></td>
-                <td>Product Title</td>
-                <td>$34.84</td>
-                <td>Sold</td>
-                <td>Reviewed</td>
-            </tr>
-            <tr class="fw-bold">
-                <th scope="row">4</th>
-                <td><i class="bi bi-joystick py-2 px-3 rounded-3 shadow-sm" style="font-size:23px; background:white;"></i></td>
-                <td>Product Title</td>
-                <td>$34.84</td>
-                <td>Sold</td>
-                <td>Reviewed</td>
-            </tr>
-            <tr class="fw-bold">
-                <th scope="row">4</th>
-                <td><i class="bi bi-joystick py-2 px-3 rounded-3 shadow-sm" style="font-size:23px; background:white;"></i></td>
-                <td>Product Title</td>
-                <td>$34.84</td>
-                <td>Sold</td>
-                <td>Reviewed</td>
-            </tr>
-        </tbody>
-    </table>
+﻿@using FlipBuddyWebApplication.Domain.Models
+
+
+<div class="fade-container">
+    
+            @if (ListedProducts == null || !ListedProducts.Any())
+            {
+                <div class="p-2" style="width:100%; height:200px; text-align:center; display:flex; justify-content:center; align-content:center;">
+                    <h5 class="mt-4">No products listed yet</h5>
+                </div>
+            }
+            else
+            {
+                <table class="table table-borderless">
+                    <tbody>
+                        @foreach (var product in ListedProducts)
+                        {
+                            <tr class="fw-bold">
+                                @* <td><i class="bi bi-joystick py-2 px-3 rounded-3 shadow-sm" style="font-size:23px; background:white;"></i></td> *@
+
+                                <td><CategoryIconComponent TextColor="#000000" FontSize="23px" Color="#F9FFFC" CategoryId="product.CategoryId" /></td>
+
+                                <td style="width:auto; white-space:nowrap; max-width:200px; overflow:hidden; text-overflow:ellipsis;">@product.Title</td>
+
+                                <td>$@product.SellPrice</td>
+                      
+                                @if (product.DateSold == null)
+                                {
+							        <td class="fw-bold"><i class="bi bi-hourglass-split"></i></td>
+                                }
+                                else
+                                {
+							        <td class="fw-bold"><i class="bi bi-currency-dollar"></i></td>
+                                }
+                                <td>Reviewed</td>
+                            </tr>                 
+                        }  
+                    </tbody>
+                </table>
+            }     
 </div>
 
 <style>
@@ -63,6 +58,8 @@
             pointer-events: none; /* Allows clicks to pass through */
         }
 </style>
-@code {
 
+@code {
+    [Parameter]
+    public List<Product> ListedProducts { get; set; } = new List<Product>();
 }

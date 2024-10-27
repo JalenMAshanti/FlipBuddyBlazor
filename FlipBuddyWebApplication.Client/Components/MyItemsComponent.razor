@@ -1,83 +1,110 @@
-﻿@using FlipBuddyWebApplication.Client.Components
-@using FlipBuddyWebApplication
-@using FlipBuddyWebApplication.Client.ViewModels
-@using FlipBuddyWebApplication.Domain.Models
-@using FlipBuddyWebApplication.Persistence.Repositories
-
-@inject ProductRepository ProductRepository
-
-<PageTitle>My Items</PageTitle>
-
+﻿
+@inject NavigationManager NavigationManager
+@inject InventoryViewModel ViewModel
+@inject InventoryClient Client
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+ 
 <!-- Page Content -->
 <div class="col d-flex flex-column full-height" style="width: 100%;">
-
     <!-- Title Content -->
-    <div class="row my-3">
+    <div class="row mt-3 mb-2">
         <div class="col-10 col-sm-6 col-md-4 col-lg-8">
-            <h1 class="fw-bold fs-3">My Products</h1>
+            <h1 class="fw-bold fs-3">My Inventory</h1>
         </div>
         <div class="col-2 col-sm-6 col-md-8 col-lg-4 d-flex align-items-center justify-content-center">
-            <div class="rounded-pill">
-                <h3 class="fw-bold m-0" style="font-size: 20px; text-align: center;">averyverlongusername</h3>
-            </div>
+            <!-- Possibly add a button or navigation here -->
         </div>
     </div>
 
-    <!--Product Table-->
-    <div class="row">
-        @if (MyProducts is null)
-        {
-            <div class="loader"></div>
-        }
-        else if (MyProducts.Count() == 0)
-        {
-            <div class="container-fluid rounded-4" style="height:200px; display:flex; justify-content:center; align-content:center;">
-                <h4 class="text-secondary mt-5">No items listed yet</h4>
+    <div class="px-3">
+        <!-- Insert Item -->
+        <div class="row my-3" style="height:100%;">
+            <div class="col-12 col-md-2 col-lg-1 mb-2 mb-md-0">
+                <button class="btn text-white fs-5 rounded-3 focus-ring focus-ring-success w-100 h-100" style="background-color:#3E7E55;">
+                    <i class="bi bi-upc-scan"></i>
+                </button>
             </div>
-        }
-        else if (MyProducts.Any())
-        {
-            <div class="container-fluid rounded-4" >
-                <table class="table table-hover table-borderless">
-                    <thead>
-                        <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Category</th>
-                            <th scope="col">Description</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Bought</th>
-                            <th scope="col">Sell</th>
-                            <th scope="col">Sold</th>
-                            <th scope="col">AI</th>
-                        </tr>               
-                    </thead>
+            <div class="col-12 col-md-10 col-lg-11">
+                <div id="uploadContainer" class="p-4 rounded-3 text-center upload-container" style="height:100%; border-width:1px; border-color:dimgrey; background-color:lightgray;">
+                    <InputFile Multiple OnChange="@HandleSelected" />
+                    <p class="fs-8 mt-2 mx-auto my-auto" style="color:dimgrey;">Drag and drop photo or upload photo of barcode or Item</p>
+                </div>
+            </div>
+        </div>
 
+        <!-- Product Table -->
+        <div class="my-2 row">
+            <div class="row">
+                <div class="pt-2">
+                    <h4 class="fs-4 fw-bold my-2">Products</h4>
+                </div>
+                <div>
+                    <a href="/dashboard/@ApplicationPages.NewItemPage" class="btn btn-success fw-bold rounded-pill shadow-sm text-white">Add Product</a>
+                </div>
+            </div>
+            @if (ViewModel.isLoading)
+            {
 
-                    <tbody>
-                        @foreach(var product in MyProducts)
-                        { 
-                            <tr>
-                                <td>@product.Title</td>
-                                <td>@product.CategoryId</td>
-                                <td style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100px;">@product.Description</td>
-                                <td>@product.Quantity</td>
-                                <td>@product.PurchasePrice</td>
-                                <td>@product.SellPrice</td>
-                                @if (string.IsNullOrEmpty(product.DateSold))
+                <div class="p-4 mt-5" style="height:500px; width:100%; display:flex; justify-content:center; align-content:center;">
+                    <div class="loader mt-5" style="height:80px; width:80px;"></div>
+                </div>
+            }
+            else
+            {
+                @if (ViewModel.MyProducts is null)
+                {
+                    <div class="loader"></div>
+                }
+                else if (ViewModel.MyProducts.Count() == 0)
+                {
+                    <div class="container-fluid rounded-4 d-flex justify-content-center align-items-center" style="height:200px;">
+                        <h4 class="text-secondary mt-5">No items in inventory yet</h4>
+                    </div>
+                }
+                else if (ViewModel.MyProducts.Any())
+                {
+                    <div class="container-fluid rounded-4">
+                        <table class="table table-hover table-borderless">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Description</th>
+                                    <th class="text-center" scope="col">Bought</th>
+                                    <th class="text-center" scope="col">Sell</th>
+                                    <th class="text-center" scope="col">Sold</th>
+                                    <th class="text-center" scope="col">AI</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var product in ViewModel.MyProducts)
                                 {
-                                    <td></td>
+                                    <tr @onclick="() => SetCurrentProduct(product.ProductGuid)" style="height: 20px;">
+                                        <td style="width:10%;">@Client._productRepository.GetCategory(product.CategoryId, ViewModel.AllCategories)</td>
+                                        <td style="width:20%; max-width:30%; overflow:hidden; text-overflow:ellipsis;">@product.Title</td>
+                                        <td style="width:40%; white-space:nowrap; max-width:200px; overflow:hidden; text-overflow:ellipsis;">@product.Description</td>
+                                        <td class="text-center" style="width:10%;">@product.PurchasePrice.ToString("C")</td>
+                                        <td class="text-center" style="width:10%;">@product.SellPrice.ToString("C")</td>
+                                        @if (product.DateSold == "")
+                                        {
+                                            <td class="text-center" style="width:10%;"><i class="bi bi-hourglass-split"></i></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center" style="width:10%;"><i class="bi bi-currency-dollar"></i></td>
+                                        }
+                                        <td class="text-center" style="width:10%;"><i class="bi bi-stars"></i></td>
+                                    </tr>
                                 }
-                                else
-                                {
-                                    <td><i class="bi bi-currency-dollar"></i></td>
-                                }        
-                                <td><i class="bi bi-stars"></i></td>
-                            </tr>
-                        } 
-                    </tbody>
-				</table>
-			</div>
-        }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                           
+            }
+            
+        </div>
     </div>
 </div>
 
@@ -85,25 +112,127 @@
 
 <!-- Styles -->
 <style>
-    /* General Styles */
-    .rounded-pill {
-        background-color: #EAEEE5;
-        padding: 10px 25px;
-        display: inline-block;
+    .loader {
+        width: 60px;
+        aspect-ratio: 1;
+        display: grid;
+        grid: 50%/50%;
+        color: #3E7E55;
+        --_g: no-repeat linear-gradient(currentColor 0 0);
+        background: var(--_g),var(--_g),var(--_g);
+        background-size: 50.1% 50.1%;
+        animation: l6-0 1.5s infinite steps(1) alternate, l6-0-0 3s infinite steps(1);
+    }
+
+        .loader::before {
+            content: "";
+            background: currentColor;
+            transform: perspective(150px) rotateY(0deg) rotateX(0deg);
+            transform-origin: bottom right;
+            animation: l6-1 1.5s infinite linear alternate;
+        }
+
+    @@keyframes l6-0 {
+        0% {
+            background-position: 0 100%,100% 100%,100% 0
+        }
+
+        33% {
+            background-position: 100% 100%,100% 100%,100% 0
+        }
+
+        66% {
+            background-position: 100% 0,100% 0,100% 0
+        }
+    }
+
+    @@keyframes l6-0-0 {
+        0% {
+            transform: scaleX(1) rotate(0deg)
+        }
+
+        50% {
+            transform: scaleX(-1) rotate(-90deg)
+        }
+    }
+
+    @@keyframes l6-1 {
+        16.5% {
+            transform: perspective(150px) rotateX(-90deg) rotateY(0deg) rotateX(0deg);
+            filter: grayscale(0.8)
+        }
+
+        33% {
+            transform: perspective(150px) rotateX(-180deg) rotateY(0deg) rotateX(0deg)
+        }
+
+        66% {
+            transform: perspective(150px) rotateX(-180deg) rotateY(-180deg) rotateX(0deg)
+        }
+
+        100% {
+            transform: perspective(150px) rotateX(-180deg) rotateY(-180deg) rotateX(-180deg);
+            filter: grayscale(0.8)
+        }
     }
 </style>
-
 
 @code
 {
     [Parameter]
-    public string UserGuid { get; set; } = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
-
-    private List<Product>? MyProducts { get; set; }
+    public string userGuid { get; set; } = string.Empty;
 
     protected async override Task OnInitializedAsync()
     {
-        MyProducts = await ProductRepository.GetProductsByUserGuid(UserGuid);
+        ViewModel.isLoading = true;
+
+        userGuid = await localStorage.GetItemAsync<string>("UsersGuid");
+
+        ViewModel.MyProducts = await Client._productRepository.GetProductsByUserGuid(userGuid);
+
+        ViewModel.AllCategories = CachedAppData.AllCategoies;
+
+        ViewModel.isLoading = false;
     }
 
+	public void GoToNewItem()
+	{
+		NavigationManager.NavigateTo($"/dashboard/{ApplicationPages.NewItemPage}");
+	}
+
+	private async Task HandleSelected(InputFileChangeEventArgs e)
+	{
+		var selectedFile = e.File;
+
+		// Create a new MultipartFormDataContent
+		var content = new MultipartFormDataContent();
+
+		// Read the image file into a stream
+		using var stream = selectedFile.OpenReadStream(maxAllowedSize: 1024 * 1024 * 15); // Max 15 MB
+
+		// Create a stream content for the image
+		var streamContent = new StreamContent(stream);
+		streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(selectedFile.ContentType);
+
+		// Add the file content to the multipart form data
+		content.Add(streamContent, "image", selectedFile.Name);
+
+		// Send the request to your API
+		using var httpClient = new HttpClient();
+		var response = await httpClient.PostAsync($"https://localhost:7294/Product/UploadBarcode?Guid={Guid.NewGuid()}&UserGuid={userGuid}", content);
+
+		if (response.IsSuccessStatusCode)
+		{
+
+			NavigationManager.NavigateTo("/dashboard/items");
+		}
+
+		NavigationManager.NavigateTo("/dashboard/items");
+	}
+
+	private async Task SetCurrentProduct(string productGuid)
+	{
+		await localStorage.SetItemAsync("SelectedItem", productGuid);
+		NavigationManager.NavigateTo($"/dashboard/CurrentItem");
+	}	
 }

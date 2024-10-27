@@ -1,115 +1,136 @@
-﻿@using FlipBuddyWebApplication.Client.Components
-@using FlipBuddyWebApplication
-@using FlipBuddyWebApplication.Client.ViewModels
-@using FlipBuddyWebApplication.Persistence.API
-
-@inject ExternalApiService ExternalApiService
-
-<PageTitle>Dashboard</PageTitle>
+﻿@inject HomeViewModel HomeViewModel
+@inject HomeViewModelClient Client
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 <!-- Page Content -->
 <div class="col d-flex flex-column full-height" style="width: 100%;">
-
-    <!-- Overview Row -->
-    <div class="row my-3">
-        <div class="col-10 col-sm-6 col-md-4 col-lg-8">
-            <h1 class="fw-bold fs-3">Overview</h1>
-        </div>
-        <div class="col-2 col-sm-6 col-md-8 col-lg-4 d-flex align-items-center justify-content-center">
-            <div class="rounded-pill">
-                <h3 class="fw-bold m-0" style="font-size: 20px; text-align: center;">averyverlongusername</h3>
+    <div class="container pb-3">
+        @if (isLoading)
+        {
+            <div class="p-4 mt-5" style="height:500px; width:100%; display:flex; justify-content:center; align-content:center;">
+			    <div class="loader mt-5" style="height:80px; width:80px;"></div>
+            </div>     
+        }
+        else
+        {    
+            <!-- Overview Row -->
+            <div class="row my-3 bg-white pe-5">
+                <div class="col-10 col-sm-6 col-md-4 col-lg-8" style="display:flex; align-content:center">
+                    <h1 class="fw-bold fs-3">Overview</h1>
+                </div>
+                <div class="col-2 col-sm-6 col-md-8 col-lg-4" style="display:flex; justify-content:end">
+                    <div class="rounded-pill">
+                        <h3 class="fw-bold m-0" style="font-size: 20px; text-align: center;">@HomeViewModel.User.Username</h3>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+ 
+            <!-- Portfolio and Top Selling Categories Row -->
+            <div class="row mb-5" style="">
+                <div class="col-sm-12 col-md-12 col-lg-6 d-flex flex-column">
+                    <h4 class="fw-bold overview-row">Portfolio</h4>
+                    <div class="container rounded-4 p-4 flex-grow-1 shadow-lg container-background" style="min-height:200px">
 
-    <!-- Portfolio and Top Selling Categories Row -->
-    <div class="row mb-5" style="">
-        <div class="col-sm-12 col-md-12 col-lg-6 d-flex flex-column">
-            <h4 class="fw-bold overview-row">Portfolio</h4>
-            <div class="container rounded-4 p-4 flex-grow-1 shadow-lg container-background" style="min-height:200px">
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-12 col-xl-3">
+                                <div class="row">
+                                    @if (HomeViewModel.ItemsInInventory == null)
+                                    {
+                                        <h1 class="fw-bold text-white" style="font-size:200%;">$0</h1>
+                                    }
+                                    else
+                                    {
+                                       <h1 class="fw-bold text-white" style="font-size:200%;">$@HomeViewModel.SoldItems.Select(_=>_.CalculateProfit()).Sum()</h1> 
+                                    }                    
+                                </div>
+                                <div class="row">
+							        <h4 class="fw-bold text-white fs-4">Profit</h4>
+                                </div>
+                                <div class="row">
+                                    <h4 class="text-white fs-6">@HomeViewModel.User.Flips flips remaining</h4>
+                                </div>
+                            </div>
 
-                <div class="row">
-                    <div class="col-sm-12 col-lg-12 col-xl-3">
-                        <div class="row">
-							<h1 class="fw-bold text-white" style="font-size:200%;">$1,452.32</h1>
-                        </div>
-                        <div class="row">
-							<h4 class="fw-bold text-white fs-4">Total earned</h4>
-                        </div>
+                            <div class=" col-sm-12 col-lg-12 col-xl-9">
+
+                               <LineChartComponent Products="HomeViewModel.SoldItems"/>   
+
+                            </div>
+                        </div>  
+                                       
+                        @if (HomeViewModel.User.SubscriptionTier == 0)
+                        {
+                            <h5 class="fw-bold text-white fs-6" style="position: absolute; bottom: 0;">Free Account </h5>
+                        }
+                        else
+                        {
+                            <h5 class="fw-bold text-white fs-6" style="position: absolute; bottom: 0;">Premium Account </h5>
+                        }
 
                     </div>
-                    <div class=" col-sm-12 col-lg-12 col-xl-9">
-
-                       <LineChartComponent/>   
-
-                    </div>
-                </div>                            
-                <h5 class="fw-bold text-white fs-6" style="position: absolute; bottom: 0;">Free Account</h5>
-            </div>
-        </div>
+                </div>
         
-        <div class="col-sm-12 col-md-12 col-lg-6 mt-3 mt-lg-0  d-flex flex-column">
-            <h4 class="fw-bold overview-row">Top Selling Categories</h4>
-            <div class="container flex-grow-2 rounded-4 p-3  shadow-lg" style="height:100%; min-height:200px;">
-				<div class="row" style="height:100%;">
-
-                    <div class="col-6" style=" justify-content:center; align-items:center; display:flex;">
-
-                        <DonutChartComponent/>
-                                      
-                    </div>
-                    <div class="col-6" style=" justify-content:center; align-items:center; display:flex;">
-
-                        <TopCategoriesComponent/>
-
-                    </div>
-
-                </div>                
-			</div>
-        </div>		
-    </div>
-
-    <!-- Recently Listed Items and Premium Upgrade Row -->
-    <div class="row flex-grow-1 ">
-        <div class="col-sm-12 col-md-12 col-lg-7 col-xl-9">
-			<div class="mt-3 mt-lg-0">
-                <div class="row" style="height:44px;">
-                    <div class="col" style="display:flex; align-items:center;">
-						<h4 class="fw-bold overview-row ">Recently Listed Items</h4>
-                    </div>
-                    <div class="col">
-                        <button class="rounded-pill shadow-sm bg-success px-4 text-white fw-bold my-auto">Quick List <i class="bi bi-upc-scan"></i> </button>
-                    </div>
-					
+                <div class="col-sm-12 col-md-12 col-lg-6 mt-5 mt-lg-0  d-flex flex-column">
+				    <h4 class="fw-bold overview-row">Top Inventory Categories</h4>
+                    <div class="container flex-grow-2 rounded-4 p-3  shadow-lg" style="height:100%; min-height:200px;">
+				        <div class="row" style="height:100%;">
+                            <div class="col-6" style=" justify-content:center; align-items:center; display:flex;">         
+                        
+                                <DonutChartComponent Products="HomeViewModel.ItemsInInventory"/>     
+                        
+                            </div>
+                            <div class="col-6" style=" justify-content:center; align-items:center; display:flex;">
+                    
+                                <TopCategoriesComponent Products="HomeViewModel.ItemsInInventory"/> 
+                          
+                            </div>
+                        </div>                
+			        </div>
                 </div>
-				
-				<div class="recent-items">
-					<RecentlyListedItemsComponent/>
-				</div>
-
-            </div>
             
-        </div>
-        <div class="col-sm-0 col-md-12 col-lg-5 col-xl-3 d-none d-lg-block d-flex flex-column">
-            <div class="container rounded-4 p-4 flex-grow-1 shadow subimage"
-                 style="background-color: #CADEC8; position: relative; height: 100%; max-height:300pxpx;">
-                <div class="container mb-4">
-                    <h1 class="fw-bold text-black" style="font-size: 24px;">
-                        Earn more by switching to premium for unlimited Flips!
-                    </h1>
-                    <a class="btn rounded-pill fw-bold px-4 upgrade-btn">
-                        Upgrade
-                    </a>
-                </div>
             </div>
-        </div>
+
+            <!-- Recently Listed Items and Premium Upgrade Row -->
+            <div class="row flex-grow-1 ">
+                <div class="col-sm-12 col-md-12 col-lg-7 col-xl-9">
+			        <div class="mt-lg-0">
+                        <div class="row" style="height:44px;">
+                            <div class="col" style="display:flex; align-items:center;">
+						        <h4 class="fw-bold overview-row ">Recently Listed Items</h4>
+                            </div>
+                            <div class="col">
+                                <button class="rounded-pill shadow-sm bg-success px-4 text-white fw-bold my-auto btn">Quick List <i class="bi bi-upc-scan"></i> </button>
+                            </div>
+					
+                        </div>
+				
+				        <div class="recent-items">
+					        <RecentlyListedItemsComponent ListedProducts="HomeViewModel.RecentlyListedItems"/>
+				        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-0 col-md-12 col-lg-5 col-xl-3 d-none d-lg-block d-flex flex-column">
+                    <div class="container rounded-4 p-4 flex-grow-1 shadow subimage"
+                         style="background-color: #CADEC8; position: relative; height: 100%; max-height:300px;">
+                        <div class="container mb-4">
+                            <h1 class="fw-bold text-black fs-4">
+                                Earn more by switching to premium for unlimited Flips!
+                            </h1>
+                            <a class="btn rounded-pill fw-bold px-4 upgrade-btn">
+                                Upgrade
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>   
+        }
     </div>
 </div>
 
 
 <!-- Styles -->
 <style>
-	/* General Styles */
 	.rounded-pill {
 		background-color: #EAEEE5;
 		padding: 10px 25px;
@@ -158,21 +179,120 @@
 	}
 
     .subimage{
-        background-image: url('Images/SubscribeImage.png');
+        background-color:#CADEC8;
         background-size:contain;
         background-repeat: no-repeat;
         background-position:center;
+    }
+
+    .loader {
+        width: 60px;
+        aspect-ratio: 1;
+        display: grid;
+        grid: 50%/50%;
+        color: #3E7E55;
+        --_g: no-repeat linear-gradient(currentColor 0 0);
+        background: var(--_g),var(--_g),var(--_g);
+        background-size: 50.1% 50.1%;
+        animation: l6-0 1.5s infinite steps(1) alternate, l6-0-0 3s infinite steps(1);
+    }
+
+        .loader::before {
+            content: "";
+            background: currentColor;
+            transform: perspective(150px) rotateY(0deg) rotateX(0deg);
+            transform-origin: bottom right;
+            animation: l6-1 1.5s infinite linear alternate;
+        }
+
+    @@keyframes l6-0 {
+        0% {
+            background-position: 0 100%,100% 100%,100% 0
+        }
+
+        33% {
+            background-position: 100% 100%,100% 100%,100% 0
+        }
+
+        66% {
+            background-position: 100% 0,100% 0,100% 0
+        }
+    }
+
+    @@keyframes l6-0-0 {
+        0% {
+            transform: scaleX(1) rotate(0deg)
+        }
+
+        50% {
+            transform: scaleX(-1) rotate(-90deg)
+        }
+    }
+
+    @@keyframes l6-1 {
+        16.5% {
+            transform: perspective(150px) rotateX(-90deg) rotateY(0deg) rotateX(0deg);
+            filter: grayscale(0.8)
+        }
+
+        33% {
+            transform: perspective(150px) rotateX(-180deg) rotateY(0deg) rotateX(0deg)
+        }
+
+        66% {
+            transform: perspective(150px) rotateX(-180deg) rotateY(-180deg) rotateX(0deg)
+        }
+
+        100% {
+            transform: perspective(150px) rotateX(-180deg) rotateY(-180deg) rotateX(-180deg);
+            filter: grayscale(0.8)
+        }
     }
 </style>
 
 
 @code
 {
-    private HomeViewModel homeViewModel { get; set; }
-
+    public string UserGuid { get; set; } = ""; 
+    public bool isLoading { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
     {
-   
+        //Set UserGuid 
+        UserGuid = await localStorage.GetItemAsync<string>("UsersGuid");
+        
+
+        //Load ViewModel Data
+        HomeViewModel.User = await Client._userRepository.GetUserByGuidAsync(UserGuid);
+        await localStorage.SetItemAsync("User", HomeViewModel.User);
+        HomeViewModel.ItemsInInventory =  await Client._productRepository.GetProductsByUserGuid(UserGuid);
+        HomeViewModel.RecentlyListedItems = HomeViewModel.ItemsInInventory.Take(5).ToList();
+        HomeViewModel.SoldItems = HomeViewModel.ItemsInInventory.Where(_ => _.DateSold != "").ToList();
+
+        IsStillLoading();
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //Load App Data            
+            CachedAppData.AllCategoies = await Client._categoryRepository.GetAllCategories();
+            CachedAppData.AllConditions = await Client._conditionRepository.GetAllConditions();
+        }
+    }
+
+    public void IsStillLoading()
+    {
+        if (HomeViewModel.User == null || HomeViewModel.ItemsInInventory == null)
+        {
+            isLoading = true;
+
+        }
+        else
+        {
+            isLoading = false;
+            
+        }
     }
 }

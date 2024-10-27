@@ -1,52 +1,71 @@
-﻿@rendermode InteractiveServer
+﻿@using FlipBuddyWebApplication.Domain.Helpers
+@using System.Globalization
+@rendermode InteractiveServer
 
 <div style="height:300px">
 
-    <ApexChart TItem="MyData"
+    <ApexChart TItem="MonthlyStats"
                Height="@("100%")"
                Options="options">
 
-        <ApexPointSeries TItem="MyData"
+        <ApexPointSeries TItem="MonthlyStats"
                          Items="Data"
-                         Name="Net Profit"
+                         Name="Sales"
                          SeriesType="SeriesType.Bar"
-                         XValue="e => e.Category"
-                         YValue="e=> e.NetProfit" />
+                         XValue="e => e.Month"
+                         YValue="e=> e.Sale" />
        
 
     </ApexChart>
 </div>
+
 @code {
-    private List<MyData> Data { get; set; } = new();
+    [Parameter]
+    public List<Product> Products { get; set; } = new List<Product>();
+
+    private List<MonthlyStats> Data { get; set; } = new();
+
     protected override void OnInitialized()
     {
-        Data.Add(new MyData { Category = "Jan", NetProfit = 12, Revenue = 33 });
-        Data.Add(new MyData { Category = "Feb", NetProfit = 43, Revenue = 42 });
-        Data.Add(new MyData { Category = "Mar", NetProfit = 112, Revenue = 23 });
-        Data.Add(new MyData { Category = "April", NetProfit = 99, Revenue = 55 });
-        Data.Add(new MyData { Category = "May", NetProfit = 100, Revenue = 49 });
-        Data.Add(new MyData { Category = "June", NetProfit = 112, Revenue = 23 });
-        Data.Add(new MyData { Category = "July", NetProfit = 99, Revenue = 55 });
-        Data.Add(new MyData { Category = "August", NetProfit = 100, Revenue = 49 });
+        var lastEightMonths = MonthHelper.GetLastEightMonthsWithYear();
+
+        foreach (var monthYear in lastEightMonths)
+        {
+            int monthNumber = monthYear.Month;
+
+            int year = monthYear.Year;
+
+            Data.Add(new MonthlyStats {
+                                        Month = monthYear.MonthName, 
+                                        Sale = Products.Where(p => DateTime.TryParse(p.DateSold, out DateTime dateSold) && dateSold.Month == monthNumber && dateSold.Year == year).Select(x => x.SellPrice).Sum(), 
+                                        Profit = Products.Where(p => DateTime.TryParse(p.DateSold, out DateTime dateSold) && dateSold.Month == monthNumber && dateSold.Year == year).Select(x => x.CalculateProfit()).Sum()
+                                       });    
+        }
     }
 
-    public class MyData
-    {
-        public string Category { get; set; }
-        public int NetProfit { get; set; }
-        public int Revenue { get; set; }
-    }
 
-    private ApexChartOptions<MyData> options = new ApexChartOptions<MyData>()
+
+    #region ChartStyling
+    private ApexChartOptions<MonthlyStats> options = new ApexChartOptions<MonthlyStats>()
     {
+            Chart = new Chart
+            {
+                Type = ApexCharts.ChartType.Bar,
+
+                Toolbar = new Toolbar
+                {
+                    Show = false // This hides the menu bar
+                }
+            },
+
+
         PlotOptions = new PlotOptions
         {
             Bar = new PlotOptionsBar
             {
                 BorderRadius = 5,   // Rounds the corners of the bars
                 Horizontal = false,   // Vertical bars
-                ColumnWidth = "50%"
-               
+                ColumnWidth = "50%"         
             }
         },
 
@@ -57,7 +76,7 @@
             StrokeDashArray = 5,    // Style of the grid lines (dashed lines)
             Position = GridPosition.Back
         },
-        
+
         Colors = new List<string> { "#FFFFFF" },
 
 
@@ -80,6 +99,9 @@
             {
                 Labels = new YAxisLabels
                 {
+                    Formatter =  @"function (value) {
+                             return '$' + Number(value).toLocaleString();}",
+
                     Style = new AxisLabelStyle
                     {
                         FontSize = "14px",  // Font size for Y-axis labels
@@ -90,7 +112,13 @@
                 }
             }
         },
-
-
     };
+    #endregion
+
+    public string DollarFormat(string value)
+    {
+        return $"${value}";    
+    }
 }
+
+        

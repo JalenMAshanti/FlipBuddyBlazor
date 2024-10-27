@@ -1,41 +1,49 @@
-﻿@page "/dashboard"
+﻿@page "/dashboard/{componentType}"
 
 @using FlipBuddyWebApplication.Client.Components
+@using FlipBuddyWebApplication.Domain.Constants
+
+
 @rendermode InteractiveServer
 
 
-<div class="sidebar"> 
-    <NavBar OnNavButtonClick="ChangeView"/>
+<div class="sidebar">
+	<NavBar />
 </div>
 
-<div class="d-flex flex-column" style="padding:2vh; padding-left:0; background:#3E7E55; width:100%; height:100%; ">
-    <div class="col-12 flex-grow-1" style="height: 100%; width:100%;">
+<div class="d-flex flex-column" style="padding:2vh; background:#3E7E55; width:100%; height:100%; ">
+	<div class="col-12 flex-grow-1" style="height: 100%; width:100%;">
 		<div class="content px-4 py-3" style="overflow-x:auto; background-color: white; height: 100%; width:100%; border-radius:2vh; scrollbar-width:none;">
-            @if (currentView == "Home")
-            {
-                <HomeComponent/>
-            }
-            else if (currentView == "Search")
-            {
-                <ProductSearchComponent/>
-            }
-            else if (currentView == "Items")
-            {
-                <MyItemsComponent/>    
-            }
+			@if (componentType == ApplicationPages.HomePage)
+			{
+				<HomeComponent />
+			}
+			else if (componentType == ApplicationPages.SearchPage)
+			{
 
+				<ProductSearchComponent />
+			}
+			else if (componentType == ApplicationPages.ItemPage)
+			{
+				<MyItemsComponent />
+			}
+			else if (componentType == ApplicationPages.NewItemPage)
+			{
+				<AddToInventoryComponent />
+			}
+			else if (componentType == "CurrentItem")
+			{
+				<ItemDisplayComponent />
+			}
 		</div>
-    </div>    
+	</div>
 </div>
+
 
 
 @code {
-    private string currentView = "Home";
+    [Parameter]
+    public string componentType { get; set; } = ApplicationPages.HomePage;
 
-
-    private void ChangeView(string view)
-    {
-        currentView = view;
-        StateHasChanged();
-    }
 }
+

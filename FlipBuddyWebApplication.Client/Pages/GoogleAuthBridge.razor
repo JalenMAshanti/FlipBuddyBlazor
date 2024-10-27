@@ -1,0 +1,40 @@
+﻿@page "/google-auth/"
+
+@using FlipBuddyWebApplication.Persistence.Repositories
+
+@inject NavigationManager NavigationManager
+@inject GoogleAuthService AuthService
+
+<h3>Please wait...</h3>
+
+
+@code {
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            var googleLoginUrl = await AuthService._account.CreateOAuth2Token(
+                provider: Appwrite.Enums.OAuthProvider.Google,
+                success: "https://localhost:7277/dashboard", // URL to redirect after login
+                failure: "https://localhost:7277/login").ConfigureAwait(false);
+
+
+            // Check if the generated URL is valid
+            if (!string.IsNullOrEmpty(googleLoginUrl))
+            {
+                // Redirect user to Google's OAuth login page
+                NavigationManager.NavigateTo(googleLoginUrl, forceLoad: false);
+            }
+            else
+            {
+                // Handle the case where the URL is null or empty
+                Console.WriteLine("Failed to generate Google login URL.");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log or handle the error
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+	}
+}
