@@ -1,4 +1,5 @@
-﻿using FlipBuddyWebApplication.Domain.Models;
+﻿using FlipBuddyWebApplication.Domain.Constants;
+using FlipBuddyWebApplication.Domain.Models;
 using FlipBuddyWebApplication.Persistence.Abstractions;
 using FlipBuddyWebApplication.Persistence.API;
 using FlipBuddyWebApplication.Persistence.API.ApiResponses.UserResponses;
@@ -11,10 +12,10 @@ namespace FlipBuddyWebApplication.Persistence.Repositories
 		{
 		}
 
-		public async Task<User> GetUserByGuidAsync(string guid) => (await _externalApiService.GetAPIResponse<GetUserByGuidResponse>($"https://localhost:7294/User/GetUserByGuid?UserGuid={guid}")).AsDomainUser();
+		public async Task<User> GetUserByGuidAsync(string guid) => (await _externalApiService.GetAPIResponse<GetUserByGuidResponse>($@"{Hidden.baseApiUrl}{Hidden.GetUserByGuidEndpoint(guid)}")).AsDomainUser();
 
-		public async Task<HttpResponseMessage> DeleteUserByGuidAsync() => await _externalApiService.DeleteAPIRequest("https://localhost:7294/User/DeleteUserByGuid");
+		public async Task<HttpResponseMessage> DeleteUserByGuidAsync() => await _externalApiService.DeleteAPIRequest($@"{Hidden.baseApiUrl}{Hidden.DeleteUserByGuidEndpoint}");
 
-		public async Task<HttpResponseMessage> InsertUserByGuidAsync(object instance) => await _externalApiService.PostAPIRequest("https://localhost:7294/User/InsertUser", instance);
+		public async Task<HttpResponseMessage> InsertUserByGuidAsync(object instance) => await _externalApiService.PostAPIRequest($@"{Hidden.baseApiUrl}{Hidden.InsertUserEndpoint}", instance);
 	}
 }
