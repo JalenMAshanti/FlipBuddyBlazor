@@ -1,0 +1,34 @@
+﻿@inject NavigationManager NavigationManager
+@inject EbayRepository EbayRepository
+@page "/signup/ebay"
+@using FlipBuddyWebApplication.Domain.Models.Ebay.EbayToken.Responses.Token
+
+<div style="height:100vh; background-color:#EAEEE5;">
+
+</div>
+
+@code {
+    protected async override void OnInitialized()
+    {
+        // Get the full URI
+        var uri = new Uri(NavigationManager.Uri);
+
+        // Extract the authorization code from the query string
+        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query).Get("code");
+
+
+        if (!string.IsNullOrEmpty(queryParams))
+        {
+            TokenResponse oauthToken = await EbayRepository.GetOAuthTokenAsync(queryParams);
+       
+            Hidden.TestUserToken = oauthToken.access_token;
+
+            NavigationManager.NavigateTo($"/dashboard/{ApplicationPages.SettingsPage}");
+        }
+        else
+        {
+            Console.WriteLine("Authorization Code not found in URL.");
+        }
+    }
+}
+
