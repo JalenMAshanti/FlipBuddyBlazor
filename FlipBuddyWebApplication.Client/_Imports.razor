@@ -6,26 +6,39 @@
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.JSInterop
+
+
+
+@* Projects *@
 @using FlipBuddyWebApplication.Client
-@using ApexCharts
-@using MudBlazor
-
-
-@using FlipBuddyWebApplication.Client.Components
 @using FlipBuddyWebApplication
-@using FlipBuddyWebApplication.Client.ViewModels
-@using FlipBuddyWebApplication.Client.ViewModels.Inventory
+
+@* Domain Layer *@
 @using FlipBuddyWebApplication.Domain.CachedData
 @using FlipBuddyWebApplication.Domain.Constants
 @using FlipBuddyWebApplication.Domain.Models
+
+@* Persistence Layer *@
 @using FlipBuddyWebApplication.Persistence.Repositories
-
-
-@using FlipBuddyWebApplication.Client.ViewModels.Home
 @using FlipBuddyWebApplication.Persistence.API
-
 @using FlipBuddyWebApplication.Persistence.API.ApiResponses.LoginResponses
 @using FlipBuddyWebApplication.Persistence.Factories
 
+@* ViewModels *@
+@using FlipBuddyWebApplication.Client.ViewModels
+@using FlipBuddyWebApplication.Client.ViewModels.Home
+@using FlipBuddyWebApplication.Client.ViewModels.Inventory
+
+
+@* ExternalService *@
 @using Appwrite
 @using Appwrite.Services
+@using ApexCharts
+@using MudBlazor
+
+@* Components *@
+@using FlipBuddyWebApplication.Client.Components.Home.SubComponents
+@using FlipBuddyWebApplication.Client.Components.Inventory.SubComponents
+@using FlipBuddyWebApplication.Client.Components.Settings.SubComponents
+@using FlipBuddyWebApplication.Client.Components.Search
+@using FlipBuddyWebApplication.Client.Components
