@@ -25,7 +25,7 @@
         <button href="#" class="nav-link nav-item" @onclick="GoToMyItems">
             <i class="bi bi-list-check"></i>
         </button>
-        <button href="#" class="nav-link nav-item">
+        <button href="#" class="nav-link nav-item" @onclick="GoToSettings">
             <i class="bi bi-gear"></i>
         </button>
         <button class="nav-link nav-item" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -113,6 +113,13 @@
     private async Task GoToMyItems()
     {
         navigationMananger.NavigateTo($"/dashboard/{ApplicationPages.ItemPage}");
+
+        await Task.CompletedTask;
+    }
+
+    private async Task GoToSettings()
+    {
+        navigationMananger.NavigateTo($"/dashboard/{ApplicationPages.SettingsPage}");
 
         await Task.CompletedTask;
     }

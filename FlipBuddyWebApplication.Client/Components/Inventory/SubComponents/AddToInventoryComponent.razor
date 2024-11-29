@@ -1,0 +1,749 @@
+﻿@using FlipBuddyWebApplication.Client.ViewModels.AddToInventory
+@using FlipBuddyWebApplication.Domain.Constants
+@using FlipBuddyWebApplication.Domain.Models
+@using FlipBuddyWebApplication.Persistence.Repositories
+
+@inject AddToInventoryViewModel ViewModel
+@inject AddToInventoryViewModelClient Client
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime JS
+
+@rendermode InteractiveServer
+
+<div>
+	<div class="container">
+	
+		<!--control buttons-->
+		<div class="container d-flex justify-content-between" style="position: fixed; bottom: 50px; left: 0; right: 0; text-align: center; z-index: 1000; padding-left:10%; padding-right:10%;">
+			<a id="backButton" @onclick="ScrollToPreviousInput" class=" btn btn-primary rounded-circle border-none shadow-sm fs-3"><i class="bi bi-caret-left"></i></a>		
+			<a id="nextButton" @onclick="ScrollToNextInput" class=" btn btn-primary rounded-circle border-none shadow-sm fs-3"><i class="bi bi-caret-right"></i></a>
+		</div>
+
+
+			
+		<div class="row my-3 sticky-top">
+			<div class="col-10 col-sm-6 col-md-4 col-lg-8">
+				<h1 class="fw-bold fs-3">Add Product to Inventory</h1>
+			</div>
+			<div class="col-2 col-sm-6 col-md-8 col-lg-4 d-flex align-items-center justify-content-center">
+			</div>
+		</div>
+
+
+		<EditForm Model="@insertrequest" FormName="addNewProduct" OnSubmit="HandleInsert">
+			<DataAnnotationsValidator/>
+			
+			<!--Space Row-->
+			<div class="row" id="start">
+				<div class="" style="height:100vh;">
+				</div>
+			</div>
+			
+			
+			
+			<!--Title-->
+			<div class="row" id="producttitle">
+				<div class="" style="height: 100vh; display:flex; justify-content:center;">
+					<div class="mx-auto my-auto">
+						<h1 class="fw-bold">Whats this product called?</h1>
+						<label for="producttitlet" class="form-label fw-bold">Product Title</label>
+						<InputText @bind-Value="insertrequest.Title" type="text" class="form-control" placeholder="Apple iPhone 12 - 128GB - Black (Unlocked) - Excellent Condition" id="producttitlet" />
+						<ValidationMessage For="() => insertrequest.Title"/>
+					</div>
+				</div>
+			</div>
+
+
+			
+			<!--Space Row-->
+			<div class="row">
+				<div class="" style="height:100vh;">
+				</div>
+			</div>
+
+
+
+			<!--Description-->
+			<div class="row" id="productdescription">
+				<div class="" style="height: 100vh; width:100%; display:flex; justify-content:center;">
+					<div class="mx-auto my-auto">
+						<h1 class="fw-bold">Describe this product</h1>
+						<label for="productdescriptiont" class="form-label fw-bold">Product Description</label>
+						<InputTextArea @bind-Value="insertrequest.Description" type="text" class="form-control fw-bold fs-7" style="height:200px; overflow-y:scroll; scrollbar-width:none; resize:none;" id="productdescriptiont"/>
+						<ValidationMessage For="() => insertrequest.Description" />
+					</div>
+				</div>
+			</div>
+
+
+
+			<!--Space Row-->
+			<div class="row">
+				<div class="" style="height:100vh;">
+				</div>
+			</div>
+
+
+
+			<!--FlipBuddyCategory-->
+			<div class="row" id="productflipbuddycategory">
+				<div class="" style="height: 100vh; width:100%; display:flex; justify-content:center;">
+					<div class="mx-auto my-auto">
+						@if (ViewModel.Conditions == null || !ViewModel.Conditions.Any())
+						{
+							<h4>Something went wrong please try again later..</h4>
+						}
+						else
+						{
+							<h1 class="fw-bold">Pick a General Category</h1>
+							<label for="productflipbuddycategoryt" class="form-label fw-bold">General Category</label>
+							<InputSelect @bind-Value="insertrequest.CategoryId" class="form-select" id="productflipbuddycategoryt">
+							
+									<option selected>Select a General Category</option>
+									@foreach (var category in ViewModel.Categories)
+									{
+										<option class="fw-bold" value="@category.CategoryId">
+											<p>@category.Name</p>
+										</option>
+									}						
+							</InputSelect>
+							<ValidationMessage For="() => insertrequest.Description" />	
+						}						
+					</div>
+				</div>
+			</div>
+
+
+
+			<!--Space Row-->
+			<div class="row">
+				<div class="" style="height:100vh;">
+				</div>
+			</div>
+
+
+
+
+			<!--EbayCategory-->
+			<div class="row" id="productcategory">
+				<div class="" style="height: 100vh; display:flex; justify-content:center;">
+					<div class="mx-auto my-auto">
+						@if (ViewModel.EbayCategories == null || ViewModel.EbayCategories.CategoryArray == null)
+						{
+							<h4>Something went wrong please try again later..</h4>
+						}
+						else
+						{
+							<div class="d-flex align-items-center mb-4">
+								<h1 class="fw-bold me-3">What type of product is this</h1>
+								<button class="btn btn-secondary rounded-pill shadow-sm d-flex justify-content-center align-items-center p-0"
+										style="height: 30px; width: 30px;"
+										@onclick="ClearCategorys">
+									<i class="bi bi-arrow-clockwise"></i>
+								</button>
+							</div>
+							<label for="productcategoryt" class="form-label fw-bold">Parent Category</label>
+							@if (ViewModel.SelectedCategoryLevel1Id == null)
+							{
+								<InputSelect @bind-Value="ViewModel.SelectedCategoryLevel1Id" class="form-select" id="productcategoryt">
+								<option selected>Select a Category</option>
+								@foreach (var category in ViewModel.EbayCategoriesLevel1)
+								{
+									<option class="fw-bold" value="@category.CategoryID">@category.CategoryName</option>
+								}
+								</InputSelect>
+							}
+							else
+							{
+								{
+									string parentCategory = ViewModel.EbayCategoriesLevel1.Where(_=>_.CategoryID == ViewModel.SelectedCategoryLevel1Id).Select(_=>_.CategoryName).FirstOrDefault(); 
+									<h4>@parentCategory</h4>
+								}
+								
+							}
+
+
+							
+							@if (ViewModel.SelectedCategoryLevel1Id != null)
+							{
+								GetSecondLevelCategories(ViewModel.SelectedCategoryLevel1Id);
+
+								@if (ViewModel.EbayCategoriesLevel2.Any())
+								{
+
+									<label for="productcategoryt2" class="form-label fw-bold mt-4">Child Category</label>
+									@if (ViewModel.SelectedCategoryLevel2Id == null)
+									{
+										<InputSelect @bind-Value="ViewModel.SelectedCategoryLevel2Id" class="form-select" id="productcategoryt2">
+										<option selected>Select a Category</option>
+										@foreach (var category in ViewModel.EbayCategoriesLevel2)
+										{
+											<option class="fw-bold" value="@category.CategoryID">@category.CategoryName</option>
+										}
+										</InputSelect>
+									}
+									else
+									{
+										{
+											string childCategory1 = ViewModel.EbayCategoriesLevel2.Where(_ => _.CategoryID == ViewModel.SelectedCategoryLevel2Id).Select(_ => _.CategoryName).FirstOrDefault();
+											<h4>@childCategory1</h4>
+										}
+
+									}			
+								}
+								else
+								{
+									<div class="row mt-2">
+										<btn @onclick="() => SetCategoryId(ViewModel.SelectedCategoryLevel1Id)" class="btn btn-success rounded-pill shadow-sm ">Save</btn>
+									</div>
+								}
+																								
+								
+								@if (ViewModel.SelectedCategoryLevel2Id != null)
+								{
+									GetThirdLevelCategories(ViewModel.SelectedCategoryLevel2Id);
+
+									@if (ViewModel.EbayCategoriesLevel3.Any())
+									{
+										<label for="productcategoryt3" class="form-label fw-bold mt-4">Child Category</label>
+										@if (ViewModel.SelectedCategoryLevel3Id == null)
+										{
+											<InputSelect @bind-Value="ViewModel.SelectedCategoryLevel3Id" class="form-select" id="productcategoryt3">
+												<option selected>Select a Category</option>
+												@foreach (var category in ViewModel.EbayCategoriesLevel3)
+												{
+													<option class="fw-bold" value="@category.CategoryID">@category.CategoryName</option>
+												}
+											</InputSelect>	
+										}
+										else
+										{
+											{
+												string childCategory2 = ViewModel.EbayCategoriesLevel3.Where(_ => _.CategoryID == ViewModel.SelectedCategoryLevel3Id).Select(_ => _.CategoryName).FirstOrDefault();
+												<h4>@childCategory2</h4>
+											}
+										}	
+									}
+									else
+									{
+										<div class="row mt-2">
+										<btn @onclick="() => SetCategoryId(ViewModel.SelectedCategoryLevel2Id)" class=" btn btn-success rounded-pill shadow-sm ">Save</btn>
+										</div>
+									}
+									
+								
+							
+									@if (ViewModel.SelectedCategoryLevel3Id != null)
+									{
+										GetForthLevelCategories(ViewModel.SelectedCategoryLevel3Id);
+										@if(ViewModel.EbayCategoriesLevel4.Any())
+										{
+											<label for="productcategoryt4" class="form-label fw-bold mt-4">Child Category</label>
+											@if (ViewModel.SelectedCategoryLevel4Id == null)
+											{
+												<InputSelect @bind-Value="ViewModel.SelectedCategoryLevel4Id" class="form-select" id="productcategoryt4">
+													<option selected>Select a Category</option>
+													@foreach (var category in ViewModel.EbayCategoriesLevel4)
+													{
+														<option class="fw-bold" value="@category.CategoryID">@category.CategoryName</option>
+													}
+												</InputSelect>	
+											}
+											else
+											{
+												{
+													string childCategory3 = ViewModel.EbayCategoriesLevel3.Where(_ => _.CategoryID == ViewModel.SelectedCategoryLevel3Id).Select(_ => _.CategoryName).FirstOrDefault();
+													<h4>@childCategory3</h4>
+												}
+											}
+										}
+										else
+										{
+											<div class="row mt-2">
+												<btn @onclick="() => SetCategoryId(ViewModel.SelectedCategoryLevel3Id)" class="btn btn-success rounded-pill shadow-sm ">Save</btn>
+											</div>
+										}
+									}
+								}
+							}
+						}
+					</div>
+				</div>
+			</div>
+
+
+
+			<!--Space Row-->
+			<div class="row">
+				<div class="" style="height:100vh;">
+				</div>
+			</div>
+
+
+
+			<!--Specifics-->
+			<div class="row" id="productspecifics">
+				<div class="" style="height:100vh; width:100%; display:flex; justify-content:center;">
+					<div class="mx-auto my-auto">
+						<h1 class="fw-bold">Add Specific Details</h1>
+						@if (ViewModel.RequiredItemSpecifics == null)
+						{
+							<div class="container pt-2" style=" max-height:40vh; overflow-y:auto;">
+								@foreach (var specific in insertrequest.ProductSpecifics)
+								{
+
+									<div class="specific-section">
+										<div class="row">
+											<div class="col-9">
+												<InputText @bind-Value="specific.SpecificName" class="form-control fw-bold mb-4" placeholder="Specific Name" />
+											</div>
+											<div class="col">
+												<btn @onclick="() => RemoveSpecific(specific)" class="btn btn-danger rounded-circle p-2" style="width:40px; height:40px; display:flex; align-content:center; justify-content:center;"><i class="bi bi-trash3"></i></btn>
+											</div>
+
+										</div>
+
+
+
+
+										@foreach (var specificValue in specific.SpecificValues)
+										{
+
+											<div class="input-group mb-2">
+												<InputText @bind-Value="specificValue.Value" placeholder="Specific Value" class="form-control" />
+												<!-- Button to remove the SpecificValue -->
+												<button type="button" @onclick="() => RemoveSpecificValue(specific, specificValue)" class="btn btn-danger">
+													<i class="bi bi-x-lg"></i>
+												</button>
+											</div>
+
+										}
+
+									</div>
+
+									<button type="button" class="btn btn-primary rounded-3 mt-1 mb-2 mb-2" @onclick="() => AddSpecificValue(specific)">Add Value</button>
+									<hr />
+								}
+								@if (insertrequest.ProductSpecifics.Count() >= 7)
+								{
+									<button disabled type="button" class="btn btn-primary rounded-3 mb-2" @onclick="AddSpecific">Add Specific</button>
+								}
+								else
+								{
+									<button type="button" class="btn btn-primary rounded-3 mb-2" @onclick="AddSpecific">Add Specific</button>
+								}
+
+							</div>
+						}
+						else
+						{
+							<div class="container pt-2" style=" max-height:40vh; overflow-y:auto;">
+
+								@foreach (var specific in insertrequest.ProductSpecifics)
+								{
+									@if (specific.IsRequired == true)
+									{
+										<div class="specific-section">
+											<div class="row">
+												<h6 class="text-secondary fw-bold">Required</h6>
+												<div class="col-9">
+													<InputText @bind-Value="specific.SpecificName" class="form-control fw-bold mb-4" placeholder="Specific Name" />
+												</div>
+											</div>
+
+											@foreach (var specificValue in specific.SpecificValues)
+											{
+												<div class="input-group mb-2">
+													<InputSelect @bind-Value="specificValue.Value" placeholder="Specific Value" class="form-control">
+													<option value="" disabled selected>Select an option</option>
+													@foreach (var option in specificValue.ValueOptions)
+													{
+														<option class="fw-bold" value="@option">
+															<p>@option</p>
+														</option>
+													}
+													</InputSelect>
+												</div>
+											}
+											<hr/>                                                                                                                                                                  
+										</div>
+									}
+									else
+									{
+										<div class="specific-section">
+											<div class="row">
+												<div class="col-9">
+													<InputText @bind-Value="specific.SpecificName" class="form-control fw-bold mb-4" placeholder="Specific Name" />
+												</div>
+												<div class="col">
+													<btn @onclick="() => RemoveSpecific(specific)" class="btn btn-danger rounded-circle p-2" style="width:40px; height:40px; display:flex; align-content:center; justify-content:center;">
+														<i class="bi bi-trash3"></i>
+													</btn>
+												</div>
+											</div>
+
+											@foreach (var specificValue in specific.SpecificValues)
+											{
+												<div class="input-group mb-2">
+													<InputText @bind-Value="specificValue.Value" placeholder="Specific Value" class="form-control" />
+													<button type="button" @onclick="() => RemoveSpecificValue(specific, specificValue)" class="btn btn-danger">
+														<i class="bi bi-x-lg"></i>
+													</button>
+												</div>
+											}
+
+											<button type="button" class="btn btn-primary rounded-3 mt-1 mb-2 mb-2" @onclick="() => AddSpecificValue(specific)">Add Value</button>
+											<hr />
+										</div>
+									}
+								}
+								@if (insertrequest.ProductSpecifics.Count() >= 7)
+								{
+									<button disabled type="button" class="btn btn-primary rounded-3 mb-2" @onclick="AddSpecific">Add Specific</button>
+								}
+								else
+								{
+									<button type="button" class="btn btn-primary rounded-3 mb-2" @onclick="AddSpecific">Add Specific</button>
+								}
+
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+
+
+
+
+			<!--Space Row-->
+			<div class="row">
+				<div class="" style="height:100vh;">
+				</div>
+			</div>
+
+
+
+			<!--Condition-->
+			<div class="row" id="productcondition">
+				<div class="" style="height: 100vh; display:flex; justify-content:center;">
+					<div class="mx-auto my-auto">
+						@if (ViewModel.Conditions == null || !ViewModel.Conditions.Any())
+						{
+							<h4>Something went wrong please try again later..</h4>
+						}
+						else
+						{
+							<h1 class="fw-bold">What condition would you say this product is in</h1>
+							<label for="productconditiont" class="form-label fw-bold">Product Condition</label>
+							<InputSelect @bind-Value="insertrequest.ConditionId" class="form-select" id="productconditiont">
+								<option selected>Select a Condition</option>
+								@foreach (var condition in ViewModel.Conditions)
+								{
+									<option class="fw-bold" value="@condition.ConditionId">
+										<h5>@condition.ConditionTitle</h5>
+										<p>@condition.Description</p>
+									</option>
+								}
+							</InputSelect>
+							<ValidationMessage For="() => insertrequest.ConditionId" />
+						}
+					</div>
+				</div>
+			</div>
+
+
+			<!--Space Row-->
+			<div class="row">
+				<div class="" style="height:100vh;">
+				</div>
+			</div>
+
+
+
+			<!--Prices-->
+			<div class="row" id="productprices">
+				<div class="" style="height: 100vh; display:flex; justify-content:center;">
+					<div class="mx-auto my-auto">
+						<h1 class="fw-bold">How much did it cost and what do you want to sell it for?</h1>
+						<div class="row">
+							<div class="col-6">
+								<label for="boughtprice" class="form-label fw-bold">Bought for</label>
+								<div class="input-group mb-3">
+									<span class="input-group-text">$</span>
+									<InputNumber @bind-Value="insertrequest.PurchasedPrice" type="number" class="form-control" id="boughtprice"/>
+								</div>
+							</div>
+							<div class="col-6">
+								<label for="sellprice" class="form-label fw-bold">Sell for</label>
+								<div class="input-group mb-3">
+									<span class="input-group-text">$</span>
+									<InputNumber @bind-Value="insertrequest.SellPrice" type="text" class="form-control" id="sellprice"/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			
+			<!--Space Row-->
+			<div class="row">
+				<div class="" style="height:100vh;">
+				</div>
+			</div>
+
+
+
+
+			<!--Quantity-->
+			<div class="row" id="productquantity">
+				<div class="" style="height: 100vh; display:flex; justify-content:center;">
+
+					<div class="mx-auto my-auto">
+						<h1 class="fw-bold">How many of this product do you wish to sell</h1>
+						<label for="productquantityt">Set Quantity<span id="sliderValue"></span></label>
+						<InputNumber @bind-Value="insertrequest.Quantity" type="number" class="form-control" id="quantity" />
+						<ValidationMessage For="() => insertrequest.Quantity"/>
+					</div>
+				</div>
+			</div>
+
+
+
+
+			<!--Space Row-->
+			<div class="row">
+				<div class="" style="height:100vh;">
+				</div>
+			</div>
+
+
+
+			<!--Add to Inventory-->
+			<div class="row" id="finalizeproduct">
+				<div class="" style="height: 100vh; display:flex; justify-content:center;">
+					<div class="mx-auto my-auto px-5">
+						<h1 class="fw-bold mb-3">Add product to your inventory?</h1>
+						<button class="btn rounded-3 shadow fw-bold text-white" type="submit" id="finalize" style="background-color:#3E7E55; width:100%;">Add</button>
+					</div>
+				</div>
+			</div>
+
+
+
+		</EditForm>	
+	</div>
+</div>
+
+
+
+
+<script>
+	window.scrollToElementById = function (elementId) {
+		const element = document.getElementById(elementId);
+		if (element) {
+			element.scrollIntoView({ behavior: 'smooth' });
+		}
+	};
+</script>
+
+@* 	document.addEventListener('wheel', function (event) {
+		event.preventDefault();
+	}, { passive: false }); *@
+
+
+@code {
+	private bool specificsInitialized = false;
+
+	[SupplyParameterFromForm]
+	private InsertProductRequest insertrequest { get; set; } = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		ClearCategorys();
+		insertrequest = new InsertProductRequest();
+
+		ViewModel.Categories = await Client._categoryRepository.GetAllCategories();
+		ViewModel.Conditions = await Client._conditionRepository.GetAllConditions();
+		ViewModel.EbayCategories = await Client._ebayRepository.GetEbayCategories(Hidden.TestUserToken);
+		ViewModel.EbayCategoriesLevel1 = ViewModel.EbayCategories.CategoryArray.Category.Select(_ => _).Where(_ => _.CategoryLevel == 1).ToList();
+		ViewModel.RequiredItemSpecifics = null;
+
+
+
+		await JS.InvokeVoidAsync("scrollToElementById", "producttitle");
+		currentIndex = 1;
+
+		insertrequest.UserGuid = await localStorage.GetItemAsync<string>("UsersGuid");
+		insertrequest.Guid = Guid.NewGuid();
+		insertrequest.Currency = "USD";
+
+		insertrequest.ProductSpecifics = new List<Specific>();
+
+		if (ViewModel.RequiredItemSpecifics != null)
+		{
+			foreach (var aspect in ViewModel.RequiredItemSpecifics.aspects.Where(_ => _.aspectConstraint.aspectRequired == true))
+			{
+				if (!insertrequest.ProductSpecifics.Any(specific => specific.SpecificName == aspect.localizedAspectName))
+				{
+					insertrequest.ProductSpecifics.Add(new Specific()
+                    {
+                        SpecificName = aspect.localizedAspectName,
+                    });
+				}
+			}
+		}
+	}
+
+	private async void HandleInsert()
+	{
+		HttpResponseMessage? result = null;
+		int statuscode = 0;
+
+		try
+		{
+			result = await Client._productRepository.InsertProduct(insertrequest);
+			statuscode = (int)result.StatusCode;
+		}
+		catch
+		{
+			Client._navigationManager.NavigateTo($"/dashboard/{ApplicationPages.ItemPage}");
+			return;
+		}
+
+
+		if (statuscode == 200)
+		{
+			Client._navigationManager.NavigateTo($"/dashboard/{ApplicationPages.ItemPage}");
+			await Task.CompletedTask;
+			return;
+		}
+
+		Client._navigationManager.NavigateTo($"/dashboard/{ApplicationPages.ItemPage}");
+		return;
+	}
+
+	#region HandlePageMovment
+
+	private int currentIndex = 0;
+
+	private string[] formInputs = { "start", "producttitle", "productdescription", "productflipbuddycategory", "productcategory", "productspecifics", "productcondition", "productprices", "productquantity", "finalizeproduct" };
+
+	//Scroll to the Next input field
+	private async Task ScrollToNextInput()
+	{
+		if (currentIndex < formInputs.Length - 1)
+		{
+			currentIndex++;
+			// Call JavaScript to scroll to the next input
+			await JS.InvokeVoidAsync("scrollToElementById", formInputs[currentIndex]);
+		}
+	}
+
+	// Scroll to the previous input field
+	private async Task ScrollToPreviousInput()
+	{
+		if (currentIndex > 1)
+		{
+			currentIndex--;
+			// Invoke JavaScript to scroll to the previous input field
+			await JS.InvokeVoidAsync("scrollToElementById", formInputs[currentIndex]);
+		}
+	}
+
+	#endregion
+
+	#region HandleProductSpecific
+
+	private void AddSpecific()
+	{
+		insertrequest.ProductSpecifics.Add(new Specific() { IsRequired = false });
+	}
+
+	private void AddSpecificValue(Specific specific)
+	{
+		specific.SpecificValues.Add(new SpecificValue());
+	}
+
+	private void RemoveSpecific(Specific specific)
+	{
+		insertrequest.ProductSpecifics.Remove(specific);
+		StateHasChanged();
+	}
+
+	private void RemoveSpecificValue(Specific specific, SpecificValue specificValue)
+	{
+		specific.SpecificValues.Remove(specificValue);
+		StateHasChanged();
+	}
+	#endregion
+
+	#region HandleCategories
+
+	public void GetSecondLevelCategories(int? categoryId)
+	{
+		ViewModel.EbayCategoriesLevel2 = ViewModel.EbayCategories.CategoryArray.Category.Select(_ => _).Where(_ => _.CategoryParentID == categoryId).ToList();
+	}
+
+	public void GetThirdLevelCategories(int? categoryId)
+	{
+		ViewModel.EbayCategoriesLevel3 = ViewModel.EbayCategories.CategoryArray.Category.Select(_ => _).Where(_ => _.CategoryParentID == categoryId).ToList();
+	}
+
+	public void GetForthLevelCategories(int? categoryId)
+	{
+		ViewModel.EbayCategoriesLevel4 = ViewModel.EbayCategories.CategoryArray.Category.Select(_ => _).Where(_ => _.CategoryParentID == categoryId).ToList();
+	}
+
+	public async Task SetCategoryId(int? categoryId)
+	{
+		if (categoryId == null)
+		{
+			throw new ArgumentNullException(nameof(categoryId), "Category ID cannot be null.");
+		}
+
+		// Set the category ID
+		insertrequest.EbayCategoryId = categoryId.Value;
+
+		// Get required item specifics from the eBay repository
+		ViewModel.RequiredItemSpecifics = await Client._ebayRepository.GetItemAspectsForCategory(Hidden.TestUserToken, categoryId);
+
+		// Add required specifics to the ProductSpecifics list
+		foreach (var aspect in ViewModel.RequiredItemSpecifics.aspects
+									.Where(aspect => aspect.aspectConstraint.aspectRequired == true))
+		{
+			var specific = new Specific
+			{
+				SpecificName = aspect.localizedAspectName,
+				IsRequired = true,
+				SpecificValues = new List<SpecificValue>()
+			};
+
+			var specificValue = new SpecificValue();
+
+			// Populate SpecificValues with the aspect's values
+			foreach (var value in aspect.aspectValues)
+			{
+				specificValue.ValueOptions.Add(value.localizedValue);	
+			}
+			specific.SpecificValues.Add(specificValue);
+			insertrequest.ProductSpecifics.Add(specific);
+		}
+	}
+	
+	private void ClearCategorys()
+	{
+		ViewModel.SelectedCategoryLevel1Id = null;
+		ViewModel.SelectedCategoryLevel2Id = null;
+		ViewModel.SelectedCategoryLevel3Id = null;
+		ViewModel.SelectedCategoryLevel4Id = null;
+
+		ViewModel.EbayCategoriesLevel2 = null;
+		ViewModel.EbayCategoriesLevel3 = null;
+		ViewModel.EbayCategoriesLevel4 = null;
+	}
+	#endregion
+}
+
+
