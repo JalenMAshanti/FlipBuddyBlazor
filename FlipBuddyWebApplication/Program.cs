@@ -41,6 +41,7 @@ builder.Services.AddTransient<CategoryRepository>();
 builder.Services.AddTransient<GuidRepository>();
 builder.Services.AddTransient<LoginRepository>();
 builder.Services.AddTransient<ConditionRepository>();
+builder.Services.AddTransient<EbayRepository>();
 //Clients
 builder.Services.AddTransient<HomeViewModelClient>();
 builder.Services.AddTransient<SearchViewModelClient>();
