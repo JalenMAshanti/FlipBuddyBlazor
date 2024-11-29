@@ -38,9 +38,9 @@
 						<label for="password" class="form-label fw-bold">Password</label>
 						<InputText @bind-Value="loginRequest.Password" type="password" id="password" class="form-control fw-bold"/>
 						<ValidationMessage For="()=> loginRequest.Password" />
-						<div id="passwordHelpBlock" class="form-text">
+						@* <div id="passwordHelpBlock" class="form-text">
 							Remember me
-						</div>
+						</div> *@
 
 
 						<a href="#" class="text-secondary"><h1 class="fw-bold text-secondary text-center fs-6 mt-4">Having trouble signing in?</h1></a>
@@ -50,12 +50,12 @@
 						</div>
 					</EditForm>
 
-					<h1 class="fw-bold text-secondary text-center fs-6 m-4">Or sign in with</h1>
+					@* <h1 class="fw-bold text-secondary text-center fs-6 m-4">Or sign in with</h1>
 
 					<div class="d-grid gap-2">
 						<a href="/google-auth/" class="btn btn-light shadow-sm fw-bold" type="button"><i class="bi bi-google"></i>   Google</a>
 						<a href="@ebayredirect" class="btn btn-light shadow-sm fw-bold" type="button">Ebay</a>
-					</div>
+					</div> *@
 				</div>
 			</div>
 
@@ -122,5 +122,5 @@
 		return;
 	}
 
-	public string ebayredirect = @"https://auth.sandbox.ebay.com/oauth2/authorize?client_id=JalenAsh-FlipBudd-SBX-b6df6134a-4039bc91&response_type=code&redirect_uri=Jalen_Ashanti-JalenAsh-FlipBu-lnsukfx&scope=https://api.ebay.com/oauth/api_scope https://api.ebay.com/oauth/api_scope/buy.order.readonly https://api.ebay.com/oauth/api_scope/buy.guest.order https://api.ebay.com/oauth/api_scope/sell.marketing.readonly https://api.ebay.com/oauth/api_scope/sell.marketing https://api.ebay.com/oauth/api_scope/sell.inventory.readonly https://api.ebay.com/oauth/api_scope/sell.inventory https://api.ebay.com/oauth/api_scope/sell.account.readonly https://api.ebay.com/oauth/api_scope/sell.account https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly https://api.ebay.com/oauth/api_scope/sell.fulfillment https://api.ebay.com/oauth/api_scope/sell.analytics.readonly https://api.ebay.com/oauth/api_scope/sell.marketplace.insights.readonly https://api.ebay.com/oauth/api_scope/commerce.catalog.readonly https://api.ebay.com/oauth/api_scope/buy.shopping.cart https://api.ebay.com/oauth/api_scope/buy.offer.auction https://api.ebay.com/oauth/api_scope/commerce.identity.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.email.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.phone.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.address.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.name.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.status.readonly https://api.ebay.com/oauth/api_scope/sell.finances https://api.ebay.com/oauth/api_scope/sell.payment.dispute https://api.ebay.com/oauth/api_scope/sell.item.draft https://api.ebay.com/oauth/api_scope/sell.item https://api.ebay.com/oauth/api_scope/sell.reputation https://api.ebay.com/oauth/api_scope/sell.reputation.readonly https://api.ebay.com/oauth/api_scope/commerce.notification.subscription https://api.ebay.com/oauth/api_scope/commerce.notification.subscription.readonly https://api.ebay.com/oauth/api_scope/sell.stores https://api.ebay.com/oauth/api_scope/sell.stores.readonly";
+	public string ebayredirect = Hidden.ebayRedirect;
 }
