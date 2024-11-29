@@ -1,9 +1,4 @@
 ﻿@page "/dashboard/{componentType}"
-
-@using FlipBuddyWebApplication.Client.Components
-@using FlipBuddyWebApplication.Domain.Constants
-
-
 @rendermode InteractiveServer
 
 
@@ -35,6 +30,10 @@
 			{
 				<ItemDisplayComponent />
 			}
+			else if (componentType == ApplicationPages.SettingsPage)
+			{
+				<SettingsComponent />
+			}
 		</div>
 	</div>
 </div>
@@ -44,6 +43,5 @@
 @code {
     [Parameter]
     public string componentType { get; set; } = ApplicationPages.HomePage;
-
 }
 
