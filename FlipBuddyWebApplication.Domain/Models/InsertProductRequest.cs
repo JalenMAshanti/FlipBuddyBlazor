@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace FlipBuddyWebApplication.Domain.Models
 {
@@ -13,6 +14,9 @@ namespace FlipBuddyWebApplication.Domain.Models
 
 		[Required]
 		public int CategoryId { get; set; }
+
+		[Required]
+		public int EbayCategoryId { get; set; }
 			
 		[Required]
 		public decimal PurchasedPrice { get; set; }
@@ -33,5 +37,8 @@ namespace FlipBuddyWebApplication.Domain.Models
 		public int ConditionId { get; set; }
 
 		public string BarCode { get; set; } = string.Empty;
+
+		[JsonPropertyName("specifics")]
+		public List<Specific> ProductSpecifics { get; set; } = new List<Specific>();
 	}
 }

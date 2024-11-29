@@ -5,6 +5,7 @@
         public Product(string productGuid,
                         string title,
                         int categoryId,
+                        int ebayCategoryId,
                         decimal puchasePrice,
                         decimal sellPrice,
                         string description,
@@ -17,6 +18,7 @@
             ProductGuid = productGuid;
             Title = title;
             CategoryId = categoryId;
+            EbayCategoryId = ebayCategoryId;
             PurchasePrice = puchasePrice;
             SellPrice = sellPrice;
             Description = description;
@@ -30,6 +32,7 @@
         public string ProductGuid { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public int CategoryId { get; set; }
+        public int EbayCategoryId { get; set; }
         public decimal PurchasePrice { get; set; }
         public decimal SellPrice { get; set; }
         public string Description { get; set; } = string.Empty;
