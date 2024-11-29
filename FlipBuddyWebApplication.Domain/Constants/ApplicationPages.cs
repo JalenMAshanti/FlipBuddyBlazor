@@ -9,5 +9,7 @@
         public const string SearchPage = "Search";
 
         public const string NewItemPage = "NewItem";
+
+        public const string SettingsPage = "Settings";
     }
 }
