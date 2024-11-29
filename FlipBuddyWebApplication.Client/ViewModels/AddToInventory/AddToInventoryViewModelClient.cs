@@ -10,15 +10,18 @@ namespace FlipBuddyWebApplication.Client.ViewModels.AddToInventory
 		public readonly CategoryRepository _categoryRepository;
 		public readonly ConditionRepository _conditionRepository;
 		public readonly ProductRepository _productRepository;
+		public readonly EbayRepository _ebayRepository;
 		public AddToInventoryViewModelClient(NavigationManager navigationManager,
 											CategoryRepository categoryRepository,
 											ConditionRepository conditionRepository,
-											ProductRepository productRepository)
+											ProductRepository productRepository,
+											EbayRepository ebayRepository)
 		{
 			_navigationManager = navigationManager;
 			_categoryRepository = categoryRepository;
 			_conditionRepository = conditionRepository;
 			_productRepository = productRepository;
+			_ebayRepository = ebayRepository;
 		}
 	}
 }

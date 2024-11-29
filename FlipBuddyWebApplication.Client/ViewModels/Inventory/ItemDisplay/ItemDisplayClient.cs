@@ -8,10 +8,13 @@ namespace FlipBuddyWebApplication.Client.ViewModels.Inventory.ItemDisplay
 
         public readonly CategoryRepository _categoryRepository;
 
-        public ItemDisplayClient( ProductRepository productRepository, CategoryRepository categoryRepository) 
+        public readonly EbayRepository _ebayRepository;
+
+        public ItemDisplayClient( ProductRepository productRepository, CategoryRepository categoryRepository, EbayRepository ebayRepository) 
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
+            _ebayRepository = ebayRepository;
         }
 
 		
