@@ -5,6 +5,7 @@ using FlipBuddyWebApplication.Client.ViewModels.Home.DonutChart;
 using FlipBuddyWebApplication.Client.ViewModels.Inventory;
 using FlipBuddyWebApplication.Client.ViewModels.Inventory.ItemDisplay;
 using FlipBuddyWebApplication.Client.ViewModels.Search;
+using FlipBuddyWebApplication.Client.ViewModels.Settings;
 using FlipBuddyWebApplication.Client.ViewModels.TopCategories;
 using FlipBuddyWebApplication.Components;
 using FlipBuddyWebApplication.Domain.Constants;
@@ -50,6 +51,7 @@ builder.Services.AddTransient<DonutChartViewModelClient>();
 builder.Services.AddTransient<TopCategoriesClient>();
 builder.Services.AddTransient<InventoryClient>();
 builder.Services.AddTransient<ItemDisplayClient>();
+builder.Services.AddTransient<SettingsClient>();
 //ViewModels
 builder.Services.AddSingleton<HomeViewModel>();
 builder.Services.AddSingleton<SearchViewModel>();
