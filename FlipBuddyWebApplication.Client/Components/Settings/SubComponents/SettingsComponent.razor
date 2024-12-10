@@ -1,4 +1,6 @@
-﻿@inject Blazored.LocalStorage.ILocalStorageService localStorage
+﻿@inject SettingsClient client
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
 
 <div class="col d-flex flex-column full-height" style="width: 100%;">
     <div class="container pb-3">
@@ -33,7 +35,7 @@
 										<h5 class="fw-bold text-secondary">Username</h5>
 									</div>
 									<div class="col text-end">
-										<h5 class="text-secondary">JalenMAshanti</h5>
+										<h5 class="text-secondary">@User.Username</h5>
 									</div>
 								</div>
 
@@ -42,7 +44,7 @@
 										<h5 class="fw-bold text-secondary">First name</h5>
 									</div>
 									<div class="col text-end">
-										<h5 class="text-secondary">Jalen</h5>
+										<h5 class="text-secondary">@User.FirstName</h5>
 									</div>
 								</div>
 
@@ -51,7 +53,7 @@
 										<h5 class="fw-bold text-secondary">Last name</h5>
 									</div>
 									<div class="col text-end">
-										<h5 class="text-secondary">Ashanti</h5>
+										<h5 class="text-secondary">@User.LastName</h5>
 									</div>
 								</div>
 
@@ -60,7 +62,7 @@
 										<h5 class="fw-bold text-secondary">Email</h5>
 									</div>
 									<div class="col text-end">
-										<h5 class="text-secondary">jalenmshaw@gmail.com</h5>
+										<h5 class="text-secondary">@User.Email</h5>
 									</div>
 								</div>
 
@@ -130,13 +132,19 @@
 </div>
 
 @code {
-    public bool isLoading { get; set; } = false;
+	public bool isLoading { get; set; } = true;
 
-    public User? User { get; set; }
+	public User? User { get; set; }
 
-    protected async override Task OnInitializedAsync()
-    {
-        string userGuid = await localStorage.GetItemAsync<string>(LocalStorageTags.GetUserGuid);
+	protected async override Task OnInitializedAsync()
+	{
+		string userGuid = await localStorage.GetItemAsync<string>(LocalStorageTags.GetUserGuid);
 
-    }
+		User = await client._userRepository.GetUserByGuidAsync(userGuid);
+
+		if (User != null)
+		{
+			isLoading = false;	
+		}
+	}
 }
