@@ -34,7 +34,19 @@ namespace FlipBuddyWebApplication.Persistence.Repositories
 			{
 				return "error";
 			}			
-		} 
+		}
+
+		public bool IsProductReady(Product product)
+		{
+			if (product.EbayCategoryId == null || product.CategoryId == 22 || product.SellPrice <= 0)
+			{
+				return false;
+			}
+			else 
+			{
+				return true;	
+			}
+		}
 
 		public string GetCondition(int conditionId, List<Condition> conditions) => conditions.Where(_ => _.ConditionId == conditionId).Select(x => x.ConditionTitle + " " + x.Description).FirstOrDefault()!.ToString();
 
