@@ -7,7 +7,6 @@
 @inject UserRepository UserRepository
 @inject GuidRepository GuidRepository
 @inject NavigationManager NavigationManager
-@inject IJSRuntime jSRuntime
 
 
 <div class="" style="background:#EAEEE5; height:100%; width:100%; ">
@@ -33,7 +32,7 @@
 
 					<EditForm Model="@signupRequest" FormName="signupForm" OnValidSubmit="HandleSignup">
 						
-						<form class="g-3 needs-validation" novalidate>
+						
 							
 							<div class="row">
 								<div class="col">
@@ -104,8 +103,6 @@
 							<div class="d-grid gap-2 pt-2">
 								<button class="btn fw-bold text-white" type="submit" style="background:#3E7E55;">Sign up</button>
 							</div>
-
-						</form>
 						
 					</EditForm>
 
@@ -132,10 +129,7 @@
 
 @code {
 	[SupplyParameterFromForm]
-	private SignupRequest signupRequest { get; set; } = new SignupRequest()
-	{
-
-	};
+	private SignupRequest signupRequest { get; set; } = new SignupRequest();
 
 	private async Task HandleSignup()
 	{
