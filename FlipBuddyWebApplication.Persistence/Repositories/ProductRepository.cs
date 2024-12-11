@@ -1,5 +1,6 @@
 ﻿using FlipBuddyWebApplication.Domain.Constants;
 using FlipBuddyWebApplication.Domain.Models;
+using FlipBuddyWebApplication.Domain.Models.Ebay.AddFixedPriceItem.Response;
 using FlipBuddyWebApplication.Domain.Models.Ebay.ListingOptionsModel;
 using FlipBuddyWebApplication.Persistence.Abstractions;
 using FlipBuddyWebApplication.Persistence.API;
@@ -58,6 +59,6 @@ namespace FlipBuddyWebApplication.Persistence.Repositories
 
 		public async Task<HttpResponseMessage> DeleteProductByProductGuid(string productGuid) => await _externalApiService.DeleteAPIRequest($@"{Hidden.baseApiUrl}{Hidden.DeleteProductByProductGuid(productGuid)}");
 
-		public async Task<HttpResponseMessage> ListFromInventoryToEbay(EbayListingOptions listing) => await _externalApiService.PostAPIRequest($@"{Hidden.baseApiUrl}{Hidden.ListToEbayEndpoint}", listing);
+		public async Task<double> ListFromInventoryToEbay(EbayListingOptions listing) => await _externalApiService.PostAPIRequestEbayListing($@"{Hidden.baseApiUrl}{Hidden.ListToEbayEndpoint}", listing);
 	}
 }
