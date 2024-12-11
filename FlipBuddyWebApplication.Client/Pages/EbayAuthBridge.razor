@@ -1,4 +1,5 @@
-﻿@inject NavigationManager NavigationManager
+﻿@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavigationManager
 @inject EbayRepository EbayRepository
 @page "/signup/ebay"
 @using FlipBuddyWebApplication.Domain.Models.Ebay.EbayToken.Responses.Token
@@ -22,6 +23,7 @@
             TokenResponse oauthToken = await EbayRepository.GetOAuthTokenAsync(queryParams);
        
             Hidden.TestUserToken = oauthToken.access_token;
+            await localStorage.SetItemAsync(LocalStorageTags.GetEbayAccessToken, oauthToken.access_token);
 
             NavigationManager.NavigateTo($"/dashboard/{ApplicationPages.SettingsPage}");
         }
