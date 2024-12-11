@@ -1,6 +1,7 @@
 ﻿@using FlipBuddyWebApplication.Client.ViewModels.AddToInventory
 @using FlipBuddyWebApplication.Domain.Constants
 @using FlipBuddyWebApplication.Domain.Models
+@using FlipBuddyWebApplication.Domain.Models.Ebay.GetCategories.Response
 @using FlipBuddyWebApplication.Persistence.Repositories
 
 @inject AddToInventoryViewModel ViewModel
@@ -537,8 +538,6 @@
 </div>
 
 
-
-
 <script>
 	window.scrollToElementById = function (elementId) {
 		const element = document.getElementById(elementId);
@@ -548,39 +547,40 @@
 	};
 </script>
 
-@* 	document.addEventListener('wheel', function (event) {
-		event.preventDefault();
-	}, { passive: false }); *@
-
 
 @code {
 	private bool specificsInitialized = false;
 
 	[SupplyParameterFromForm]
-	private InsertProductRequest insertrequest { get; set; } = new();
+	private InsertProductRequest? insertrequest { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
+		// Reset Categorys
 		ClearCategorys();
-		insertrequest = new InsertProductRequest();
 
+		//ViewModel Setup
+		insertrequest = new InsertProductRequest();
+		ViewModel.AccessToken = await localStorage.GetItemAsync<string>(LocalStorageTags.GetEbayAccessToken);
 		ViewModel.Categories = await Client._categoryRepository.GetAllCategories();
 		ViewModel.Conditions = await Client._conditionRepository.GetAllConditions();
-		ViewModel.EbayCategories = await Client._ebayRepository.GetEbayCategories(Hidden.TestUserToken);
+		ViewModel.EbayCategories = await Client._ebayRepository.GetEbayCategories(ViewModel.AccessToken);
 		ViewModel.EbayCategoriesLevel1 = ViewModel.EbayCategories.CategoryArray.Category.Select(_ => _).Where(_ => _.CategoryLevel == 1).ToList();
 		ViewModel.RequiredItemSpecifics = null;
 
-
-
+		//Scroll to first input
 		await JS.InvokeVoidAsync("scrollToElementById", "producttitle");
 		currentIndex = 1;
 
+		//Insertrequest Model Setup
 		insertrequest.UserGuid = await localStorage.GetItemAsync<string>("UsersGuid");
 		insertrequest.Guid = Guid.NewGuid();
 		insertrequest.Currency = "USD";
 
 		insertrequest.ProductSpecifics = new List<Specific>();
 
+
+		//Get Required ItemSpecifics Only
 		if (ViewModel.RequiredItemSpecifics != null)
 		{
 			foreach (var aspect in ViewModel.RequiredItemSpecifics.aspects.Where(_ => _.aspectConstraint.aspectRequired == true))
@@ -596,6 +596,7 @@
 		}
 	}
 
+	#region HandleProduct
 	private async void HandleInsert()
 	{
 		HttpResponseMessage? result = null;
@@ -623,6 +624,7 @@
 		Client._navigationManager.NavigateTo($"/dashboard/{ApplicationPages.ItemPage}");
 		return;
 	}
+	#endregion
 
 	#region HandlePageMovment
 
@@ -707,7 +709,7 @@
 		insertrequest.EbayCategoryId = categoryId.Value;
 
 		// Get required item specifics from the eBay repository
-		ViewModel.RequiredItemSpecifics = await Client._ebayRepository.GetItemAspectsForCategory(Hidden.TestUserToken, categoryId);
+		ViewModel.RequiredItemSpecifics = await Client._ebayRepository.GetItemAspectsForCategory(ViewModel.AccessToken, categoryId);
 
 		// Add required specifics to the ProductSpecifics list
 		foreach (var aspect in ViewModel.RequiredItemSpecifics.aspects

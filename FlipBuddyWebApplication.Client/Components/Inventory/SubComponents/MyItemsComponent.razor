@@ -73,7 +73,7 @@
                                     <th class="text-center" scope="col">Bought</th>
                                     <th class="text-center" scope="col">Sell</th>
                                     <th class="text-center" scope="col">Sold</th>
-                                    <th class="text-center" scope="col">AI</th>
+                                    <th class="text-center" scope="col">Ready</th>
                                 </tr>
                             </thead>
 
@@ -94,7 +94,14 @@
                                         {
                                             <td class="text-center" style="width:10%;"><i class="bi bi-currency-dollar"></i></td>
                                         }
-                                        <td class="text-center" style="width:10%;"><i class="bi bi-stars"></i></td>
+                                        @if (Client._productRepository.IsProductReady(product))
+                                        {
+                                            <td class="text-center" style="width:10%;"><i class="bi bi-check-lg"></i></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center" style="width:10%;"><i class="bi bi-exclamation-triangle"></i></td>
+                                        }
                                     </tr>
                                 }
                             </tbody>
