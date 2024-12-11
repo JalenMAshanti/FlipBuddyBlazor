@@ -6,6 +6,6 @@
 
         public const string GetSelectedItem = "SelectedItem";
 
-        public const string EbayAccessToken = "EbayAccessToken";
+        public const string GetEbayAccessToken = "EbayAccessToken";
     }
 }
