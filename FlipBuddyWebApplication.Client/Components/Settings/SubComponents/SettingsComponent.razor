@@ -80,7 +80,6 @@
 					</div>
 				</div>
 
-
 				<hr />
 
 				<div class="row">
@@ -99,7 +98,16 @@
 
 								<div class="row px-4">
 									<div class="col-3 pt-3" style="display:flex; align-content:center;">
-										<h5 class="fw-bold">Not linked</h5>
+										
+										@if (string.IsNullOrEmpty(AccessToken))
+										{
+											<h5 class="fw-bold">Not linked</h5>
+										}
+										else
+										{
+											<h5 class="fw-bold">Linked</h5>
+										}
+
 									</div>
 									<div class="col-9">
 										<a href="@Hidden.ebayRedirect" style="width:100%; background-color:#0064D2;" class="btn btn-light text-white shadow-sm fw-bold my-1" type="button">Ebay</a>
@@ -119,7 +127,6 @@
 							<div class="px-3">
 								<div class="d-grid gap-2 px-4">
 									<a href="#" style="width: 100%;" class="btn btn-danger shadow-sm fw-bold my-2 mx-2" type="button">Delete Account</a>
-
 								</div>
 							</div>
 						</div>
@@ -134,11 +141,15 @@
 @code {
 	public bool isLoading { get; set; } = true;
 
+	public string AccessToken { get; set; }
+
 	public User? User { get; set; }
 
 	protected async override Task OnInitializedAsync()
 	{
 		string userGuid = await localStorage.GetItemAsync<string>(LocalStorageTags.GetUserGuid);
+
+		AccessToken = await localStorage.GetItemAsync<string>(LocalStorageTags.GetEbayAccessToken);
 
 		User = await client._userRepository.GetUserByGuidAsync(userGuid);
 
