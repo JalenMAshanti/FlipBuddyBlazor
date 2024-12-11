@@ -1,5 +1,6 @@
 ﻿@using FlipBuddyWebApplication.Domain.Models
 
+@inject ProductRepository productRepository
 
 <div class="fade-container">
     
@@ -32,7 +33,16 @@
                                 {
 							        <td class="fw-bold"><i class="bi bi-currency-dollar"></i></td>
                                 }
-                                <td>Reviewed</td>
+
+                                @if (productRepository.IsProductReady(product))
+                                {
+                                    <td>Ready</td>
+                                }
+                                else
+                                {
+                                    <td>Not Ready</td>
+                                }
+
                             </tr>                 
                         }  
                     </tbody>
