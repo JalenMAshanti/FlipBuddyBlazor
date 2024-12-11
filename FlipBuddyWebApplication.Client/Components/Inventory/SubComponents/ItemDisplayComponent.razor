@@ -5,6 +5,7 @@
 @using FlipBuddyWebApplication.Domain.Models.Ebay
 
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime JSRuntime
 @inject ItemDisplayViewModel ViewModel
 @inject ItemDisplayClient Client
 @inject NavigationManager NavigationManager
@@ -444,6 +445,16 @@
     }
 </div>
 
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="toastMessage" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Listing successfully handled!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
 
 <!-- Styles -->
 <style>
@@ -574,6 +585,19 @@
     }
 </style>
 
+<script>
+    function showToast(message, bgClass) {
+        var toastElement = document.getElementById('toastMessage');
+        var toastBody = toastElement.querySelector('.toast-body');
+        var toast = new bootstrap.Toast(toastElement);
+
+        // Update message and style dynamically
+        toastBody.textContent = message;
+        toastElement.className = `toast align-items-center text-white ${bgClass} border-0`;
+
+        toast.show();
+    }
+</script>
 
 @code
 {
@@ -676,7 +700,7 @@
             }
             else
             {
-                NavigationManager.NavigateTo($@"/dashboard/{ApplicationPages.HomePage}");
+                //NavigationManager.NavigateTo($@"/dashboard/{ApplicationPages.HomePage}");
             }
         }
         catch(Exception ex)
@@ -687,6 +711,15 @@
 
     public async void HandleListing()
     {
-        await Client._productRepository.ListFromInventoryToEbay(ListingOptions);
+        var ListingId = await Client._productRepository.ListFromInventoryToEbay(ListingOptions);
+
+        if (ListingId == 0)
+        {
+            await JSRuntime.InvokeVoidAsync("showToast", $"Item could not be listed", "bg-danger");
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("showToast", $"Listing: https://sandbox.ebay.com/itm/{ListingId}", "bg-success");   
+        }     
     }
 }
