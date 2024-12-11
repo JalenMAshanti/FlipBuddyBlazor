@@ -7,6 +7,7 @@ namespace FlipBuddyWebApplication.Client.ViewModels.AddToInventory
 {
     public class AddToInventoryViewModel : BaseViewModel
 	{
+		public string? AccessToken { get; set; }
 		public List<Condition>? Conditions { get; set; }
 		public List<Category>? Categories { get; set; }
 		public GetCategoriesResponse EbayCategories { get; set; } = new GetCategoriesResponse();
