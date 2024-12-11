@@ -1,4 +1,7 @@
-﻿using FlipBuddyWebApplication.Persistence.Factories;
+﻿using FlipBuddyWebApplication.Domain.Models.Ebay.AddFixedPricedItem.Request;
+using FlipBuddyWebApplication.Domain.Models.Ebay.AddFixedPricedItem.Response;
+using FlipBuddyWebApplication.Domain.Models.Ebay.AddFixedPriceItem.Response;
+using FlipBuddyWebApplication.Persistence.Factories;
 using Newtonsoft.Json;
 using System.Text;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -26,7 +29,7 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
         }
         #endregion
 
-        #region Get List Request
+        #region GetListRequest
         public async Task<IEnumerable<TResponse>> GetListAPIResponse<TResponse>(string _url)
         {
             try
@@ -47,7 +50,7 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
         }
         #endregion
 
-        #region Post Request
+        #region Post Requests
         public async Task<HttpResponseMessage> PostAPIRequest(string _url, Object body)
         {
 
@@ -74,10 +77,46 @@ namespace FlipBuddyWebApplication.Persistence.API.Abstractions
                 return message;
             }
         }
-        #endregion
 
-        #region Put Request
-        public async Task<HttpResponseMessage> PutAPIRequest(string _url, Object body)
+		public async Task<double> PostAPIRequestEbayListing(string _url, object body)
+		{
+			var client = ClientFactory.CreateNewClient();
+			client.BaseAddress = new Uri(_url);
+
+			string json = JsonSerializer.Serialize(body);
+			var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+			try
+			{
+				// Make the POST request
+				var response = await client.PostAsync("", data);
+
+				// Ensure the response is successful, or throw an exception
+				response.EnsureSuccessStatusCode();
+
+				// Read the response content as a string
+				var responseContent = await response.Content.ReadAsStringAsync();
+
+				// Deserialize the response content to TResponse
+				var result = JsonConvert.DeserializeObject<ListFixedPricedItemResponse>(responseContent);
+
+				return result.response.ItemID;
+			}
+			catch
+			{
+				// Return a new instance of TResponse if there's an error
+				return double.MinValue;
+			}
+			finally
+			{
+				// Dispose of the HttpClient
+				client.Dispose();
+			}
+		}
+		#endregion
+
+		#region Put Request
+		public async Task<HttpResponseMessage> PutAPIRequest(string _url, Object body)
         {
             var client = ClientFactory.CreateNewClient();
 
